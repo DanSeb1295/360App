@@ -48,19 +48,18 @@ def get_google_auth(state=None, token=None):
         return OAuth2Session(
             Auth.CLIENT_ID,
             state=state,
-            redirect_uri=Auth.REDIRECT_URI)
+            redirect_uri=request.url_root + Auth.REDIRECT_URI)
     oauth = OAuth2Session(
         Auth.CLIENT_ID,
-        redirect_uri=Auth.REDIRECT_URI,
+        redirect_uri=request.url_root + Auth.REDIRECT_URI,
         scope=Auth.SCOPE)
     return oauth
 
 @app.route('/')
-# @login_required
+@login_required
 def home():
-	# return redirect(url_for('home'))
-	# if not current_user.is_authenticated:
-	# 	return redirect(url_for('login'))
+	if not current_user.is_authenticated:
+		return redirect(url_for('login'))
 	return render_template('home.html', current_user=current_user, students=students)
 
 @app.route('/login')
@@ -152,6 +151,6 @@ def logout():
 	return redirect(url_for('home'))
 
 if __name__ == '__main__':
-# 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
-	port = int(os.environ.get('PORT', 5000))
-	app.run(host='0.0.0.0', port=port)
+	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+	# port = int(os.environ.get('PORT', 5000))
+	# app.run(host='0.0.0.0', port=port)
