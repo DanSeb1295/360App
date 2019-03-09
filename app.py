@@ -2,7 +2,7 @@ import os
 import json
 import datetime
 import time
-from flask import Flask, url_for, redirect, render_template, session, request, g
+from flask import Flask, url_for, redirect, render_template, session, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
 from requests_oauthlib import OAuth2Session
@@ -19,6 +19,7 @@ config = {
 """APP creation and configuration"""
 app = Flask(__name__)
 app.config.from_object(config['dev'])
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
@@ -79,6 +80,7 @@ def login():
 
 @app.route('/gCallback')
 def callback():
+    time.sleep(1)
     if current_user is not None and current_user.is_authenticated:
         return redirect(url_for('home'))
     if 'error' in request.args:
@@ -159,7 +161,7 @@ def logout():
 	logout_user()
 	return redirect(url_for('home'))
 
-# if __name__ == '__main__':
-# 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+if __name__ == '__main__':
+	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
 # 	port = int(os.environ.get('PORT', 5000))
 # 	app.run(host='0.0.0.0', port=port, ssl_context=('./ssl.crt', './ssl.key'))
