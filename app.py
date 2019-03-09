@@ -152,6 +152,5 @@ def logout():
 	logout_user()
 	return redirect(url_for('home'))
 
-# if __name__ == '__main__':
-	# app.run(debug=True)
-	# app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+if __name__ == '__main__':
+	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
