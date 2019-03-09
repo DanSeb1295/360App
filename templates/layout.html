@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+	<title>360App</title>
+	<link rel="stylesheet" href="{{ url_for('static',filename='main.css') }}">
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+	{% include 'includes/_sidebar.html' %}
+	<div id="main" style="border: 0; margin: 0; padding: 0;">
+		{% include 'includes/_navbar.html' %}
+		<div class="container" style="width: 100%;">
+			{% block body %}{% endblock %}
+		</div>
+		<div style="display: -webkit-flex; -webkit-flex-flow: row wrap; display: flex; flex-flow: row wrap; position: fixed; bottom: 10px; width: 100%; justify-content: space-evenly;">
+			<!-- <div style="width:80px; height: 80px;">
+				<a href="{{ '/profile/' + current_user.name.lower().replace(' ', '') if not current_user.admin else '/'}}"><img src="{{current_user.avatar}}" alt={{current_user.name + "'s Photo"}} style="border-radius: 50%; height: 100%; width: 100%; border:2px solid #393E46"></a>	
+			</div> -->
+			{% include 'includes/_popup.html' %}
+		</div>
+	</div>
+</body>
+</html>

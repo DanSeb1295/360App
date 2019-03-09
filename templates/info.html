@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+	<div style="display: -webkit-flex; -webkit-flex-flow: column; display: flex; flex-flow: column; width: 100%; height: auto; justify-content: flex-start; align-items: flex-start; margin-bottom: 100px">
+		<table style="width:100%; border-radius: 10px; border-collapse: collapse;" border="1px solid #efefef">
+		  <tr>
+		    <th>Category</th>
+		    <th>Attributes</th> 
+		    <th>Description</th>
+		  </tr>
+		  {% for category, attributes in info.items() %}
+		  	<tr>
+		  		<td class="category" rowspan="3">{{ category }}</td>
+		  		<td>{{ attributes[0].split(':')[0].strip('"') }}</td>
+		  		<td>{{ attributes[0].split(':')[-1].strip('"') }}</td>
+		  	</tr>
+		  	{% for attribute in attributes %}
+		  		{%- if loop.index == 1 %}{% continue %}{% endif %}
+			    <tr>
+			    	<td>{{ attributes[loop.index - 1].split(':')[0].strip('"') }}</td>
+		  			<td>{{ attributes[loop.index -1].split(':')[-1].strip('"') }}</td>
+			    </tr>
+		  	{% endfor %}
+		  {% endfor %}
+		</table>
+	</div>
+	<style>
+		table {
+			border-radius: 10px
+		}
+		th, td {
+		  padding: 5px;
+		  /*background-color: #efefef;*/
+		}
+		td.category {
+			text-align: center;
+		}
+	</style>
+{% endblock %}

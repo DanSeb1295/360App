@@ -1,0 +1,36 @@
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='_popup.css') }}">
+
+<button class="open-button" onclick="openForm()" style="border-radius: 50%; border: 2px solid #393E46; width: 80px; height: 80px">
+  <img src="/static/images/pencil.png" style="height: 30px; width: 30px;">
+</button>
+
+<div class="form-popup" id="myForm">
+  <div class="top-bar">
+  	<div style="float:left">
+  		<span style="padding-left: 15px">Rapid Feedback</span>	
+  	</div>
+  	<div style="float: right">
+  		<div class="closebtn" onclick="closeForm()">&times;</div>
+  	</div>
+  </div>
+  <form action="/" class="form-container">
+    <input type="text" list="students-list" placeholder="To" name="target" autocomplete="on" required>
+    <datalist id="students-list">
+      {% for student in students%}
+        <option>{{student}}</option>
+      {% endfor %}
+    </datalist>
+    <textarea placeholder="Type feedback..." name="msg" required></textarea>
+    <button type="submit" class="btn">Submit</button>
+  </form>
+</div>
+
+<script>
+function openForm() {
+  document.getElementById("myForm").style.display = "block";
+}
+
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+}
+</script>

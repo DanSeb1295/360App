@@ -1,0 +1,50 @@
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='_sidebar.css') }}">
+<div id="mySidenav" class="sidenav">
+	<div style="padding-bottom: 20px">
+		<span>
+		<input id="mySearch" style="padding-left: 20px; background-color: #393E46; color: #00ADB5; border: 0; height: 30px" type="text" placeholder="Search..." onkeyup="filterResults()">
+		</span>
+		<span>
+	  		<a href="javascript:void(0)" class="closebtn" onclick="toggleNav()">&lt;</a>
+		</span>
+	</div>
+  {% for student in students %}
+  {% if profile and profile in student %}
+    <div style="height: 5rem; background-color: #FFF4E0" class="studentList" id={{ student.replace(' ', '') }}>
+  {% else %}
+    <div style="height: 5rem;" class="studentList" id={{ student.replace(' ', '') }}>
+  {% endif %}
+  		<span style="padding-left: 15px; height: 5rem; width: 4.5rem">
+  			<div style="background-color: #F8B500; border-radius: 50%; color: #FFF4E0; height: 30px; widght:30px; text-align: center; line-height:30px; margin-top: 10px">{{ student[0] }}</div>
+  		</span>
+  		<span style="height: 100%; line-height: 100%; padding-top: 10px">
+  			<a href="{{'/profile/' + student.replace(' ', '')}}">
+  				{% if student == "Jui Khang Emerson Ng" %}
+  					{{ 'Emerson Ng' }}
+  				{% elif student == "Si Pei Tan" %}
+  					{{ 'Si Pei Tan' }}
+  				{% else %}
+  					{{ student.split()[0] + ' ' + student.split()[-1] }}
+  				{% endif %}
+  			</a>
+  		</span>
+  	</div>
+  {% endfor %}
+</div>
+
+<script type="text/javascript">
+function filterResults() {
+	var input, filter, li, a, i;
+	input = document.getElementById("mySearch");
+	filter = input.value.toUpperCase().replace(' ', '');
+	li = document.getElementsByClassName("studentList");
+	for (i = 0; i < li.length; i++) {
+	    a = li[i].id;
+	    if (a.toUpperCase().indexOf(filter) > -1) {
+	      li[i].style.display = "";
+	    } else {
+	      li[i].style.display = "none";
+    	}
+  	}
+}
+</script>

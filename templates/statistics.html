@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="jumbotron text-center" style="width: 100%; height: auto; position: sticky; position: -webkit-sticky; top: 0; z-index:1; align-content: center; box-shadow: -0px 0px 50px rgba(200, 200, 200, 1); background: linear-gradient(to right bottom, #648880, #293f50); background: -webkit-linear-gradient(to right bottom, #648880, #293f50); background: -moz-linear-gradient(to right bottom, #648880, #293f50);">
+	<h1 style="color: #FFF4E0; font-size: 30px; margin: 0; padding: 0; margin-bottom: 10px">Class Statistics</h1>
+	<!-- <cite class="lead" style="color: #00ADB5;">&quot;To be the best leadership course ever taught in UC Berkeley.&quot; - Stephen Torres</cite> -->
+	{% if current_user.admin %}
+	{% endif %}
+</div>
+	<div style="height: 100%; width: 100%;">
+		{% for plot in dataplots %}
+		<span style="height: 45%; width: 45%;">
+			<h2>{{ plot.split('/')[-1].strip('.png') }}</h2>
+			<img src={{ plot }} style="height: 100%; width: 100%;">
+		</span>
+		{% endfor %}
+		{% for plot in dataplots %}
+		<span style="height: 45%; width: 45%;">
+			<h2>{{ plot.split('/')[-1].strip('.png') }}</h2>
+			<img src={{ plot }} style="height: 100%; width: 100%;">
+		</span>
+		{% endfor %}
+	</div>
+{% endblock %}
