@@ -161,8 +161,8 @@ def logout():
 	return redirect(url_for('home'))
 
 def automail():
-	# if datetime.datetime.today().weekday() != DUE_DAY - 1:
-	# 	return None
+	if datetime.datetime.today().weekday() != DUE_DAY - 1:
+		return None
 
 	mail_settings = {
 		"MAIL_SERVER": 'smtp.gmail.com',
