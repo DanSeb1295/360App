@@ -20,7 +20,7 @@ class Config:
 
 class DevConfig(Config):
     """Dev config"""
-    DEBUG = False
+    DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, "db/local.db")
 
 

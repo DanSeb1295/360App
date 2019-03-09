@@ -24,7 +24,7 @@ app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
-login_manager.session_protection = "strong"
+login_manager.session_protection = "basic"
 
 """ DB Models """
 class User(db.Model, UserMixin):
@@ -40,10 +40,8 @@ class User(db.Model, UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
 	try:
-		print('>>>>>> TRY TO LOAD USER')
 		return User.query.get(int(user_id))
 	except User.DoesNotExist:
-		print('>>>>>> USER NOT LOADED')
 		return None
 
 """ OAuth Session creation """
@@ -74,13 +72,13 @@ def login():
         return redirect(url_for('home'))
     google = get_google_auth()
     auth_url, state = google.authorization_url(
-        Auth.AUTH_URI, access_type='online')
+        Auth.AUTH_URI, access_type='offline')
     session['oauth_state'] = state
     return redirect(auth_url)
 
 @app.route('/gCallback')
 def callback():
-    time.sleep(1)
+    print('>>>>> IN CALLBACK', session.get('oauth_state', 'NONE'))
     if current_user is not None and current_user.is_authenticated:
         return redirect(url_for('home'))
     if 'error' in request.args:
@@ -161,7 +159,7 @@ def logout():
 	logout_user()
 	return redirect(url_for('home'))
 
-# if __name__ == '__main__':
-	# app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+if __name__ == '__main__':
+	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
 # 	port = int(os.environ.get('PORT', 5000))
 # 	app.run(host='0.0.0.0', port=port, ssl_context=('./ssl.crt', './ssl.key'))
