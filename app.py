@@ -79,7 +79,6 @@ def login():
 
 @app.route('/gCallback')
 def callback():
-    time.sleep(1)
     if current_user is not None and current_user.is_authenticated:
         return redirect(url_for('home'))
     if 'error' in request.args:
@@ -89,7 +88,7 @@ def callback():
     if 'code' not in request.args and 'state' not in request.args:
         return redirect(url_for('login'))
     else:
-        google = get_google_auth(state=session.get('oauth_state', None)
+        google = get_google_auth(state=session['oauth_state'])
         try:
             token = google.fetch_token(
                 Auth.TOKEN_URI,
@@ -161,6 +160,6 @@ def logout():
 	return redirect(url_for('home'))
 
 # if __name__ == '__main__':
-# # 	# app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+	# app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
 # 	port = int(os.environ.get('PORT', 5000))
 # 	app.run(host='0.0.0.0', port=port, ssl_context=('./ssl.crt', './ssl.key'))
