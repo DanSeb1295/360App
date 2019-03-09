@@ -20,11 +20,12 @@ config = {
 app = Flask(__name__)
 app.config.from_object(config['dev'])
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.secret_key = config['SECRET_KEY']
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
-login_manager.session_protection = None
+login_manager.session_protection = "strong"
 
 """ DB Models """
 class User(db.Model, UserMixin):
@@ -74,6 +75,7 @@ def login():
     auth_url, state = google.authorization_url(
         Auth.AUTH_URI, access_type='offline')
     session['oauth_state'] = state
+    session.modified = True
     return redirect(auth_url)
 
 @app.route('/gCallback')

@@ -16,7 +16,7 @@ class Auth:
 class Config:
     """Base config"""
     APP_NAME = "360App"
-    SECRET_KEY = os.environ.get("SECRET_KEY") or str(urandom(24))
+    SECRET_KEY = os.environ.get("SECRET_KEY") or b'\x02ShpT8\x96\x07\xcc\xe1645\xfb\xc8\x07\x8f-\x01{U\xaf\x1e\x88'
 
 class DevConfig(Config):
     """Dev config"""
