@@ -24,7 +24,7 @@ app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
-login_manager.session_protection = "basic"
+login_manager.session_protection = None
 
 """ DB Models """
 class User(db.Model, UserMixin):
@@ -159,7 +159,7 @@ def logout():
 	logout_user()
 	return redirect(url_for('home'))
 
-if __name__ == '__main__':
-	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+# if __name__ == '__main__':
+# 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
 # 	port = int(os.environ.get('PORT', 5000))
 # 	app.run(host='0.0.0.0', port=port, ssl_context=('./ssl.crt', './ssl.key'))
