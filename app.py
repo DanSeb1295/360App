@@ -150,7 +150,7 @@ def logout():
 	logout_user()
 	return redirect(url_for('home'))
 
-if __name__ == '__main__':
-	# app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
-	port = int(os.environ.get('PORT', 5000))
-	app.run(host='0.0.0.0', port=port, ssl_context=('./ssl.crt', './ssl.key'))
+# if __name__ == '__main__':
+# 	# app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+# 	port = int(os.environ.get('PORT', 5000))
+# 	app.run(host='0.0.0.0', port=port)
