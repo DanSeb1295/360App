@@ -58,7 +58,7 @@ def get_google_auth(state=None, token=None):
 @app.route('/')
 # @login_required
 def home():
-	return <h1>hello</h1>
+	return '<h1>hello</h1>'
 	# return redirect(url_for('home'))
 	# if not current_user.is_authenticated:
 	# 	return redirect(url_for('login'))
