@@ -11,7 +11,7 @@ from requests.exceptions import HTTPError
 from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_accounts, students, information
 from util.data import visualise, wordcloud
 
-print('>>>>>>>', datetime.datetime.now())
+DUE_DAY = 6
 
 config = {
 	"dev": DevConfig,
@@ -22,7 +22,7 @@ config = {
 """APP creation and configuration"""
 app = Flask(__name__)
 app.config.from_object(config['dev'])
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.secret_key = app.config['SECRET_KEY']
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 db = SQLAlchemy(app)
@@ -162,24 +162,31 @@ def logout():
 	logout_user()
 	return redirect(url_for('home'))
 
+def automail():
+	if datetime.datetime.today().weekday() != DUE_DAY - 1:
+		return None
+
+	mail_settings = {
+		"MAIL_SERVER": 'smtp.gmail.com',
+		"MAIL_PORT": 465,
+		"MAIL_USE_TLS": False,
+		"MAIL_USE_SSL": True,
+		"MAIL_USERNAME": os.environ.get('MAIL_USERNAME', 'daniel.sebastian1295@gmail.com'),
+		"MAIL_PASSWORD": os.environ.get('MAIL_PASSWORD', 'Dsy.1295$%')
+	}
+
+	app.config.update(mail_settings)
+	mail = Mail(app)
+	message = {"subject": "<IEOR171 REMINDER> 360 TEAMMATE REVIEW",
+				"sender": mail_settings["MAIL_USERNAME"],
+				"bcc": ["dyee003@berkeley.edu", "daniel-sebastian95@hotmail.com"],
+				"body": "Greetings from IEOR171 Tech Firm Leadership.\n\nWe noticed that you have yet to submit your reviews for all your teammates to 360 this week. Please do so before the deadline.\n\nHave a nice day!"
+				}
+
+	with app.app_context():
+		msg = Message(**message)
+		mail.send(msg)
+
 # if __name__ == '__main__':
 # 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
-# 	mail_settings = {
-# 		"MAIL_SERVER": 'smtp.gmail.com',
-# 		"MAIL_PORT": 465,
-# 		"MAIL_USE_TLS": False,
-# 		"MAIL_USE_SSL": True,
-# 		"MAIL_USERNAME": 'daniel.sebastian1295@gmail.com',
-# 		"MAIL_PASSWORD": 'Dsy.1295$%'
-# 	}
-
-# 	app.config.update(mail_settings)
-# 	mail = Mail(app)
-
-# 	with app.app_context():
-# 		msg = Message(subject="TEST PYTHON",
-# 					sender=mail_settings["MAIL_USERNAME"],
-# 					bcc=["dyee003@berkeley.edu", "daniel-sebastian95@hotmail.com"], # replace with your email for testing
-# 					body="This is 2 test email I sent with Gmail and Python!")
-# 		mail.send(msg)
 
