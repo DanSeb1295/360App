@@ -3,12 +3,15 @@ import json
 import datetime
 import time
 from flask import Flask, flash, url_for, redirect, render_template, session, request
+from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
 from requests_oauthlib import OAuth2Session
 from requests.exceptions import HTTPError
 from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_accounts, students, information
 from util.data import visualise, wordcloud
+
+print('>>>>>>>', datetime.datetime.now())
 
 config = {
 	"dev": DevConfig,
@@ -19,7 +22,7 @@ config = {
 """APP creation and configuration"""
 app = Flask(__name__)
 app.config.from_object(config['dev'])
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.secret_key = app.config['SECRET_KEY']
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 db = SQLAlchemy(app)
@@ -161,5 +164,22 @@ def logout():
 
 # if __name__ == '__main__':
 # 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
-# 	port = int(os.environ.get('PORT', 5000))
-# 	app.run(host='0.0.0.0', port=port, ssl_context=('./ssl.crt', './ssl.key'))
+# 	mail_settings = {
+# 		"MAIL_SERVER": 'smtp.gmail.com',
+# 		"MAIL_PORT": 465,
+# 		"MAIL_USE_TLS": False,
+# 		"MAIL_USE_SSL": True,
+# 		"MAIL_USERNAME": 'daniel.sebastian1295@gmail.com',
+# 		"MAIL_PASSWORD": 'Dsy.1295$%'
+# 	}
+
+# 	app.config.update(mail_settings)
+# 	mail = Mail(app)
+
+# 	with app.app_context():
+# 		msg = Message(subject="TEST PYTHON",
+# 					sender=mail_settings["MAIL_USERNAME"],
+# 					bcc=["dyee003@berkeley.edu", "daniel-sebastian95@hotmail.com"], # replace with your email for testing
+# 					body="This is 2 test email I sent with Gmail and Python!")
+# 		mail.send(msg)
+
