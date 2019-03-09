@@ -1,15 +1,16 @@
 import os
 import numpy as np
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from wordcloud import WordCloud, STOPWORDS
 from PIL import Image
 from flask_login import current_user
 from math import pi
 
 base_path = save_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+matplotlib.use('Agg')
 
 def visualise():
 	dataplots = [
@@ -90,7 +91,7 @@ def wordcloud(profile):
 	# cloud_mask = np.array(Image.open(base_path + '/static/images/cloud.png'))
 	 
 	# Make the figure
-	wordcloud = WordCloud(background_color="#efefef", width=1600, height=400, stopwords=set(STOPWORDS)).generate(text)
+	wordcloud = WordCloud(background_color="#efefef", width=1600, height=400, stopwords=STOPWORDS).generate(text)
 
 	# Save Img
 	if not profile:

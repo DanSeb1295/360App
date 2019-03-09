@@ -2,7 +2,7 @@ import os
 import json
 import datetime
 import time
-from flask import Flask, url_for, redirect, render_template, session, request
+from flask import Flask, url_for, redirect, render_template, session, request, g
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
 from requests_oauthlib import OAuth2Session
@@ -24,7 +24,6 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 login_manager.session_protection = "strong"
-app.secret_key = os.urandom(16)
 
 """ DB Models """
 class User(db.Model, UserMixin):
@@ -39,8 +38,12 @@ class User(db.Model, UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
-
+	try:
+		print('>>>>>> TRY TO LOAD USER')
+		return User.query.get(int(user_id))
+	except User.DoesNotExist:
+		print('>>>>>> USER NOT LOADED')
+		return None
 
 """ OAuth Session creation """
 def get_google_auth(state=None, token=None):
@@ -131,8 +134,12 @@ def profile(name):
 	for s in students:
 		if name.lower() in s.lower().replace(' ', ''):
 			profile = s
+			break
+		else:
+			redirect(url_for('home'))
 	wcloud = wordcloud(profile)
 	dataplots = visualise()
+	dataplots = 'hi'
 	return render_template('profile.html', profile=profile, dataplots=dataplots, wordcloud=wcloud, current_user=current_user, students=students)
 
 @app.route('/statistics')
@@ -153,7 +160,7 @@ def logout():
 	logout_user()
 	return redirect(url_for('home'))
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
 # 	# app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
-# 	port = int(os.environ.get('PORT', 5000))
-# 	app.run(host='0.0.0.0', port=port)
+	port = int(os.environ.get('PORT', 5000))
+	app.run(host='0.0.0.0', port=port, ssl_context=('./ssl.crt', './ssl.key'))
