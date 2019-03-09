@@ -75,7 +75,7 @@ def login():
 
 @app.route('/gCallback')
 def callback():
-	time.sleep(1)
+    time.sleep(1)
     if current_user is not None and current_user.is_authenticated:
         return redirect(url_for('home'))
     if 'error' in request.args:
