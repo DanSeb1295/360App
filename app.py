@@ -24,6 +24,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 login_manager.session_protection = "strong"
+app.secret_key = os.urandom(16)
 
 """ DB Models """
 class User(db.Model, UserMixin):
@@ -148,7 +149,7 @@ def info():
 @app.route('/logout')
 @login_required
 def logout():
-	# session.pop('username')
+	session.pop('username', None)
 	logout_user()
 	return redirect(url_for('home'))
 
