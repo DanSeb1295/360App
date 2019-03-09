@@ -1,6 +1,10 @@
 import os
 from os import urandom
 
+DUE_DAY = 6
+MAIL_USERNAME = '360ieor171@gmail.com'
+MAIL_PASSWORD = 'stephentorres'
+
 basedir = os.path.abspath(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
 
 class Auth:

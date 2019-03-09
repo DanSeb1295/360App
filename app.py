@@ -8,10 +8,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
 from requests_oauthlib import OAuth2Session
 from requests.exceptions import HTTPError
-from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_accounts, students, information
+from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_accounts, students, information, DUE_DAY, MAIL_USERNAME, MAIL_PASSWORD
 from util.data import visualise, wordcloud
-
-DUE_DAY = 6
 
 config = {
 	"dev": DevConfig,
@@ -163,16 +161,16 @@ def logout():
 	return redirect(url_for('home'))
 
 def automail():
-	if datetime.datetime.today().weekday() != DUE_DAY - 1:
-		return None
+	# if datetime.datetime.today().weekday() != DUE_DAY - 1:
+	# 	return None
 
 	mail_settings = {
 		"MAIL_SERVER": 'smtp.gmail.com',
 		"MAIL_PORT": 465,
 		"MAIL_USE_TLS": False,
 		"MAIL_USE_SSL": True,
-		"MAIL_USERNAME": os.environ.get('MAIL_USERNAME', 'daniel.sebastian1295@gmail.com'),
-		"MAIL_PASSWORD": os.environ.get('MAIL_PASSWORD', 'Dsy.1295$%')
+		"MAIL_USERNAME": os.environ.get('MAIL_USERNAME', MAIL_USERNAME),
+		"MAIL_PASSWORD": os.environ.get('MAIL_PASSWORD', MAIL_PASSWORD)
 	}
 
 	app.config.update(mail_settings)
@@ -189,4 +187,3 @@ def automail():
 
 # if __name__ == '__main__':
 # 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
-
