@@ -1,6 +1,7 @@
 import os
 import json
 import datetime
+import time
 from flask import Flask, url_for, redirect, render_template, session, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
@@ -68,12 +69,13 @@ def login():
         return redirect(url_for('home'))
     google = get_google_auth()
     auth_url, state = google.authorization_url(
-        Auth.AUTH_URI, access_type='offline')
+        Auth.AUTH_URI, access_type='online')
     session['oauth_state'] = state
     return redirect(auth_url)
 
 @app.route('/gCallback')
 def callback():
+	time.sleep(1)
     if current_user is not None and current_user.is_authenticated:
         return redirect(url_for('home'))
     if 'error' in request.args:
