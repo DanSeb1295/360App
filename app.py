@@ -2,7 +2,7 @@ import os
 import json
 import datetime
 import time
-from flask import Flask, url_for, redirect, render_template, session, request
+from flask import Flask, flash, url_for, redirect, render_template, session, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
 from requests_oauthlib import OAuth2Session
@@ -11,9 +11,9 @@ from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_a
 from util.data import visualise, wordcloud
 
 config = {
-    "dev": DevConfig,
-    "prod": ProdConfig,
-    "default": DevConfig
+	"dev": DevConfig,
+	"prod": ProdConfig,
+	"default": DevConfig
 }
 
 """APP creation and configuration"""
@@ -29,14 +29,14 @@ login_manager.session_protection = "strong"
 
 """ DB Models """
 class User(db.Model, UserMixin):
-    __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    name = db.Column(db.String(100), nullable=True)
-    admin = db.Column(db.Integer, default=0)
-    avatar = db.Column(db.String(200))
-    tokens = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+	__tablename__ = "users"
+	id = db.Column(db.Integer, primary_key=True)
+	email = db.Column(db.String(100), unique=True, nullable=False)
+	name = db.Column(db.String(100), nullable=True)
+	admin = db.Column(db.Integer, default=0)
+	avatar = db.Column(db.String(200))
+	tokens = db.Column(db.Text)
+	created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -47,18 +47,18 @@ def load_user(user_id):
 
 """ OAuth Session creation """
 def get_google_auth(state=None, token=None):
-    if token:
-        return OAuth2Session(Auth.CLIENT_ID, token=token)
-    if state:
-        return OAuth2Session(
-            Auth.CLIENT_ID,
-            state=state,
-            redirect_uri=request.url_root + Auth.REDIRECT_URI)
-    oauth = OAuth2Session(
-        Auth.CLIENT_ID,
-        redirect_uri=request.url_root + Auth.REDIRECT_URI,
-        scope=Auth.SCOPE)
-    return oauth
+	if token:
+		return OAuth2Session(Auth.CLIENT_ID, token=token)
+	if state:
+		return OAuth2Session(
+			Auth.CLIENT_ID,
+			state=state,
+			redirect_uri=request.url_root + Auth.REDIRECT_URI)
+	oauth = OAuth2Session(
+		Auth.CLIENT_ID,
+		redirect_uri=request.url_root + Auth.REDIRECT_URI,
+		scope=Auth.SCOPE)
+	return oauth
 
 @app.route('/')
 @login_required
@@ -69,58 +69,56 @@ def home():
 
 @app.route('/login')
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-    google = get_google_auth()
-    auth_url, state = google.authorization_url(
-        Auth.AUTH_URI, access_type='offline')
-    session['oauth_state'] = state
-    session.modified = True
-    return redirect(auth_url)
+	if current_user.is_authenticated:
+		return redirect(url_for('home'))
+	google = get_google_auth()
+	auth_url, state = google.authorization_url(
+		Auth.AUTH_URI, access_type='offline')
+	session['oauth_state'] = state
+	session.modified = True
+	return redirect(auth_url)
 
 @app.route('/gCallback')
 def callback():
-    print('>>>>> IN CALLBACK', session.get('oauth_state', 'NONE'))
-    if current_user is not None and current_user.is_authenticated:
-        return redirect(url_for('home'))
-    if 'error' in request.args:
-        if request.args.get('error') == 'access_denied':
-            return 'You are denied access.'
-        return 'Error encountered.'
-    if 'code' not in request.args and 'state' not in request.args:
-        return redirect(url_for('login'))
-    else:
-        google = get_google_auth(state=session.get('oauth_state', None))
-        try:
-            token = google.fetch_token(
-                Auth.TOKEN_URI,
-                client_secret=Auth.CLIENT_SECRET,
-                authorization_response=request.url)
-        except HTTPError:
-            return 'HTTPError occurred.'
-        google = get_google_auth(token=token)
-        resp = google.get(Auth.USER_INFO)
-        if resp.status_code == 200:
-            user_data = resp.json()
-            email = user_data['email']
-            print(len(student_accounts), len(admin_accounts))
-            if email not in student_accounts and email not in admin_accounts:
-            	return redirect(url_for('login'))
-            user = User.query.filter_by(email=email).first()
-            if user is None:
-                user = User()
-                user.email = email
-                if email in admin_accounts:
-                	user.admin = 1
-            user.name = user_data['name']
-            print('TOKEN:', token)
-            user.tokens = json.dumps(token)
-            user.avatar = user_data['picture']
-            db.session.add(user)
-            db.session.commit()
-            login_user(user)
-            return redirect(url_for('home'))
-        return 'Could not fetch your information.'
+	if current_user is not None and current_user.is_authenticated:
+		return redirect(url_for('home'))
+	if 'error' in request.args:
+		if request.args.get('error') == 'access_denied':
+			return 'You are denied access.'
+		return 'Error encountered.'
+	if 'code' not in request.args and 'state' not in request.args:
+		return redirect(url_for('login'))
+	else:
+		google = get_google_auth(state=session.get('oauth_state', None))
+		try:
+			token = google.fetch_token(
+				Auth.TOKEN_URI,
+				client_secret=Auth.CLIENT_SECRET,
+				authorization_response=request.url)
+		except HTTPError:
+			return 'HTTPError occurred.'
+		google = get_google_auth(token=token)
+		resp = google.get(Auth.USER_INFO)
+		if resp.status_code == 200:
+			user_data = resp.json()
+			email = user_data['email']
+			if email not in student_accounts and email not in admin_accounts:
+				return redirect(url_for('login'))
+			session['unauthorized'] = False
+			user = User.query.filter_by(email=email).first()
+			if user is None:
+				user = User()
+				user.email = email
+				if email in admin_accounts:
+					user.admin = 1
+			user.name = user_data['name']
+			user.tokens = json.dumps(token)
+			user.avatar = user_data['picture']
+			db.session.add(user)
+			db.session.commit()
+			login_user(user)
+			return redirect(url_for('home'))
+		return 'Could not fetch your information.'
 
 @app.route('/ranking')
 @login_required

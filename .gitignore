@@ -1,1 +1,3 @@
 venv
+ssl.crt
+ssl.key
