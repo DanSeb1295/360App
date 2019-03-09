@@ -56,11 +56,11 @@ def get_google_auth(state=None, token=None):
     return oauth
 
 @app.route('/')
-@login_required
+# @login_required
 def home():
 	# return redirect(url_for('home'))
-	if not current_user.is_authenticated:
-		return redirect(url_for('login'))
+	# if not current_user.is_authenticated:
+	# 	return redirect(url_for('login'))
 	return render_template('home.html', current_user=current_user, students=students)
 
 @app.route('/login')
