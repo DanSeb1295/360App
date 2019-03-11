@@ -26,12 +26,15 @@ class DevConfig(Config):
     """Dev config"""
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, "db/local.db")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class ProdConfig(Config):
     """Production config"""
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, "db/online.db")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
 
 information = {
     "Work Ethic": [

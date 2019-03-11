@@ -15,7 +15,17 @@
     <div style="height: 5rem;" class="studentList" id={{ student.replace(' ', '') }}>
   {% endif %}
   		<span style="padding-left: 15px; height: 5rem; width: 4.5rem">
-  			<div style="background-color: #F8B500; border-radius: 50%; color: #FFF4E0; height: 30px; widght:30px; text-align: center; line-height:30px; margin-top: 10px">{{ student[0] }}</div>
+  			<div style="height: 30px; width:30px; text-align: center; line-height:30px; margin-top: 10px">
+          {% for user in users_db %}
+            {% if student == user['name'] %}
+              <img src={{ user['avatar'] }} style="height: 100%; width: 100%; border-radius: 50%; margin: 0; padding: 0; border: 0">
+            {% else %}
+              <div style="background-color: #F8B500; border-radius: 50%; color: #FFF4E0; height: 100%; widght:100%; text-align: center; line-height:30px; ">
+                {{ student[0] }}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
   		</span>
   		<span style="height: 100%; line-height: 100%; padding-top: 10px">
   			<a href="{{'/profile/' + student.replace(' ', '')}}">

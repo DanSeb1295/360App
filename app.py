@@ -2,7 +2,7 @@ import os
 import json
 import datetime
 import time
-from flask import Flask, flash, url_for, redirect, render_template, session, request
+from flask import Flask, flash, url_for, redirect, render_template, session, request, jsonify
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
@@ -20,7 +20,7 @@ config = {
 """APP creation and configuration"""
 app = Flask(__name__)
 app.config.from_object(config['dev'])
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', config['dev'].SQLALCHEMY_DATABASE_URI)
 app.secret_key = app.config['SECRET_KEY']
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 db = SQLAlchemy(app)
@@ -38,6 +38,19 @@ class User(db.Model, UserMixin):
 	avatar = db.Column(db.String(200))
 	tokens = db.Column(db.Text)
 	created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+
+	@property
+	def serialize(self):
+		"""Return object data in easily serializable format"""
+		return {
+			'id' : self.id,
+			'email': self.email,
+			'name': self.name,
+			'avatar': self.avatar,
+			# 'tokens': self.tokens,
+			# 'admin': self.admin,
+			# 'created_at': self.created_at.__str__
+			}
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -60,6 +73,11 @@ def get_google_auth(state=None, token=None):
 		redirect_uri=request.url_root + Auth.REDIRECT_URI,
 		scope=Auth.SCOPE)
 	return oauth
+
+@app.context_processor
+def users_db():
+	users_db = json.dumps([i.serialize for i in User.query.order_by(User.name).all()])
+	return dict(users_db=json.loads(users_db))
 
 @app.route('/')
 @login_required
@@ -110,8 +128,7 @@ def callback():
 			if user is None:
 				user = User()
 				user.email = email
-				if email in admin_accounts:
-					user.admin = 1
+			user.admin = 1 if email in admin_accounts else 0
 			user.name = user_data['name']
 			user.tokens = json.dumps(token)
 			user.avatar = user_data['picture']
@@ -156,6 +173,7 @@ def info():
 @app.route('/logout')
 @login_required
 def logout():
+	session.clear()
 	session.pop('username', None)
 	logout_user()
 	return redirect(url_for('home'))
