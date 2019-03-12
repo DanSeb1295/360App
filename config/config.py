@@ -4,6 +4,9 @@ from os import urandom
 DUE_DAY = 6
 MAIL_USERNAME = '360ieor171@gmail.com'
 MAIL_PASSWORD = 'stephentorres'
+MONGO_USER = '360App'
+MONGO_PASSWORD = 'stephentorres'
+MONGO_URI = 'mongodb+srv://{}:{}@cluster0-7qgtl.mongodb.net/test?retryWrites=true'.format(MONGO_USER, MONGO_PASSWORD)
 
 basedir = os.path.abspath(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
 
@@ -21,6 +24,8 @@ class Config:
     """Base config"""
     APP_NAME = "360App"
     SECRET_KEY = os.environ.get("SECRET_KEY") or b'\xeb9~,p\xc5$,\xf7\xd1\x80\x81\xfcn\x8f\xe4+\xb5h\xfd\x7f_\xbf\x00'
+    MONGO_URI = MONGO_URI
+    # MONGO_URI = 'mongodb+srv://{}:{}@cluster0-7qgtl.mongodb.net/360App?retryWrites=true'.format(os.environ.get("MONGO_USER"), os.environ.get("MONGO_PASSWORD"))
 
 class DevConfig(Config):
     """Dev config"""
@@ -123,7 +128,6 @@ student_accounts = [
     'kimiaz@berkeley.edu',
     'jlzhang@berkeley.edu'
 ] + [
-    'goldpiggy@berkeley.edu',
     'sunnyzhang@berkeley.edu',
     'zzysunny@berkeley.edu',
     'edward.yang98@berkeley.edu',
@@ -179,7 +183,6 @@ students = [
     'Nicholas Lofgren',
     'Nilofer Sultana Mohammad',
     'Niraj Ganesh',
-    'Rachel Hu',
     'Raine Scott',
     'Raja Riahi',
     'Stella Bao',
@@ -192,3 +195,135 @@ students = [
     'Wesley Graham',
     'Yifan Ding'
 ]
+
+pro3grouping = [
+        {
+            'projectNum' : 3,
+            'teamNum': 1,
+            'members': [
+                'Nilofer Sultana Mohammad',
+                'Arthur Huynh',
+                'Jianglai Zhang',
+                'Kaautam Uthaya Suriyan',
+                'Natalia Flores Caseres'
+            ]
+        },
+        {
+            'projectNum' : 3,
+            'teamNum': 2,
+            'members': [
+                'Jash Vora',
+                'Niraj Ganesh',
+                'Leah Kochendoerfer',
+                'Dani Goland',
+                'Daniel Shaby'
+            ]
+        },
+        {
+            'projectNum' : 3,
+            'teamNum': 3,
+            'members': [
+                'Daniel Sebastian Yee',
+                'Francesca Ledesma',
+                'Arya Anand',
+                'John Melizanis',
+                'Ilse Naranjo Brambila'
+            ]
+        },
+        {
+            'projectNum' : 3,
+            'teamNum': 4,
+            'members': [
+                'Jireh Wei En Chew',
+                'Milan Le Ruyet',
+                'Fatmanur Aydin',
+                'Yifan Ding'
+            ]
+        },
+        {
+            'projectNum' : 3,
+            'teamNum': 5,
+            'members': [
+                'Ambika Mukherjee',
+                'Chase Aplin',
+                'Nicholas Lofgren',
+                'Si Pei Tan',
+                'Stella Bao'
+            ]
+        },
+        {
+            'projectNum' : 3,
+            'teamNum': 6,
+            'members': [
+                'Smita Balaji',
+                'Saehee Im',
+                'Alan Pham',
+                'Aditya Tyagi',
+                'Raine Scott'
+            ]
+        },
+        {
+            'projectNum' : 3,
+            'teamNum': 7,
+            'members': [
+                'Bismark Haruna',
+                'Mads Have',
+                'Kathy Kong',
+                'Eric Hovagim',
+                'Caroline Newman'
+            ]
+        },
+        {
+            'projectNum' : 3,
+            'teamNum': 8,
+            'members': [
+                'Eve Mwangi',
+                'Lucie Kresl',
+                'Ethan Barnhart',
+                'Vimala Veeramachaneni',
+                'Ernest Yong En Tan'
+            ]
+        },
+        {
+            'projectNum' : 3,
+            'teamNum': 9,
+            'members': [
+                'Sunny Zhang',
+                'Raja Riahi',
+                'Charles Lu',
+                'Allison Arvin',
+                'icenturion@berkeley.edu'
+            ]
+        },
+        {
+            'projectNum' : 3,
+            'teamNum': 10,
+            'members': [
+                'Mehek Mohan',
+                'Kunal Kak',
+                'Jay Ang',
+                'Bakhshish Gill'
+            ]
+        },
+        {
+            'projectNum' : 3,
+            'teamNum': 11,
+            'members': [
+                'Kimia Zargari',
+                'Cristiano Carvalho Lacerda',
+                'Wesley Graham',
+                'Jui Khang Emerson Ng',
+                'Dominic Hugo'
+            ]
+        },
+        {
+            'projectNum' : 3,
+            'teamNum': 12,
+            'members': [
+                'Viraj Attre',
+                'Chibuzo Nwokocha',
+                'Aakarsh Gupta',
+                'Edward Yang'
+            ]
+        }
+    ]

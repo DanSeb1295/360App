@@ -1,4 +1,6 @@
 import os
+import sys
+import logging
 import json
 import datetime
 import time
@@ -6,9 +8,11 @@ from flask import Flask, flash, url_for, redirect, render_template, session, req
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
+from pymongo import MongoClient
 from requests_oauthlib import OAuth2Session
 from requests.exceptions import HTTPError
-from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_accounts, students, information, DUE_DAY, MAIL_USERNAME, MAIL_PASSWORD
+from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_accounts, students, information, DUE_DAY, MAIL_USERNAME, MAIL_PASSWORD, MONGO_URI
+from models.schemas import project_groupings_schema, comments_schema, ratings_schema, articles_schema
 from util.data import visualise, wordcloud
 
 config = {
@@ -24,6 +28,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', config['d
 app.secret_key = app.config['SECRET_KEY']
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 db = SQLAlchemy(app)
+mongoClient = MongoClient(app.config['MONGO_URI'])
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 login_manager.session_protection = "strong"
@@ -157,11 +162,11 @@ def profile(name):
 	dataplots = visualise()
 	return render_template('profile.html', profile=profile, dataplots=dataplots, current_user=current_user, students=students)
 
-@app.route('/statistics')
-@login_required
-def statistics():
-	dataplots = visualise()
-	return render_template('/statistics.html', dataplots=dataplots, current_user=current_user, students=students)
+# @app.route('/statistics')
+# @login_required
+# def statistics():
+# 	dataplots = visualise()
+# 	return render_template('/statistics.html', dataplots=dataplots, current_user=current_user, students=students)
 
 @app.route('/info')
 @login_required
@@ -206,6 +211,53 @@ def automail():
 def getwordcloud():
 	wcloud = wordcloud(request.form['profile'])
 	return jsonify({'src': wcloud})
+
+@app.route('/mongotest')
+@login_required
+def mongotest():
+	return 'POSTED'
+
+@app.context_processor
+def access_db():
+	def get_avatar(profile):
+		user = User.query.filter_by(name=profile).first()
+		if user:
+			return jsonify({'avatar': user.avatar})
+		else:
+			return jsonify({'avatar': url_for("static", filename="images/placeholder.png")})
+	return dict(get_avatar=get_avatar)
+
+@app.route('/getranking', methods=['POST'])
+def get_ranking():
+	# return jsonify({'ranked_list': ['DANIEL', 'SEBASTIAN', 'YEE']})
+	
+	db = mongoClient['360DB']
+	comments_collection = db['comments']
+	comments = []
+	for comment in comments_collection.find({}):
+		comments.append(comment)
+
+	ratings_collection = db['ratings']
+	ratings = []
+	for rating in ratings_collection.find({}):
+		ratings.append(rating)
+
+	ranking_dict = {}
+	for s in students:
+		ranking_dict[s] = compute_rating_sentiment(s, comments, ratings)
+	
+	ranked_list = sorted(ranking_dict.keys(), key=lambda x: (ranking_dict[x]['average_rating'], ranking_dict[x]['average_sentiment']))
+	# import random
+	# random.shuffle(ranked_list)
+	return jsonify({'ranked_list': ranked_list})
+
+def compute_rating_sentiment(student, comments, ratings):
+	all_ratings = [comment['sentimentScore'] for comment in comments if comment['givenTo'] == student]
+	all_sentiments = [rate[1] for rating in ratings if rating['givenTo'] == 'hi' for category in rating['ratings'].keys() for rate in rating['ratings'][category].items()]
+	average_rating = sum(all_ratings) / len(all_ratings) if all_ratings else 0
+	average_sentiment = sum(all_sentiments) / len(all_sentiments) if all_sentiments else 0
+	return {'average_rating': average_rating, 'average_sentiment': average_sentiment}
+
 
 # if __name__ == '__main__':
 # 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
