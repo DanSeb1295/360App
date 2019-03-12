@@ -154,10 +154,8 @@ def profile(name):
 			break
 		else:
 			redirect(url_for('home'))
-	wcloud = wordcloud(profile)
 	dataplots = visualise()
-	dataplots = 'hi'
-	return render_template('profile.html', profile=profile, dataplots=dataplots, wordcloud=wcloud, current_user=current_user, students=students)
+	return render_template('profile.html', profile=profile, dataplots=dataplots, current_user=current_user, students=students)
 
 @app.route('/statistics')
 @login_required
@@ -202,6 +200,12 @@ def automail():
 	with app.app_context():
 		msg = Message(**message)
 		mail.send(msg)
+
+@app.route('/getwordcloud', methods=['POST'])
+@login_required
+def getwordcloud():
+	wcloud = wordcloud(request.form['profile'])
+	return jsonify({'src': wcloud})
 
 # if __name__ == '__main__':
 # 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
