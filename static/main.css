@@ -8330,6 +8330,7 @@ button.close {
   -webkit-backface-visibility: hidden;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
+  background-color: transparent;
 }
 
 /* Style the back side */
@@ -8339,10 +8340,10 @@ button.close {
   color: #393E46;
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
-  overflow-wrap: break-word;
-  -webkit-overflow-wrap: break-word;
+  /*overflow-wrap: break-word;
+  -webkit-overflow-wrap: break-word;*/
   overflow-y: auto;
-  -webkit-overflow-y: auto;
+  /*-webkit-overflow-y: auto;*/
 }
 
 /* Ratings widget */

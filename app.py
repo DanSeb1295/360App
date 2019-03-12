@@ -32,6 +32,7 @@ mongoClient = MongoClient(app.config['MONGO_URI'])
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 login_manager.session_protection = "strong"
+mongodb = mongoClient['360DB']
 
 """ DB Models """
 class User(db.Model, UserMixin):
@@ -209,8 +210,13 @@ def automail():
 @app.route('/getwordcloud', methods=['POST'])
 @login_required
 def getwordcloud():
-	wcloud = wordcloud(request.form['profile'])
-	return jsonify({'src': wcloud})
+	comments = get_comments_from_mongo({'givenTo': request.form['profile']})
+	ratings = get_ratings_from_mongo({'givenTo': request.form['profile']})
+	rating_sentiments = compute_rating_sentiment(request.form['profile'], comments, ratings)
+	print(request.url)
+	word_string = ' '.join([comment['commentText'] for comment in comments])
+	wcloud = wordcloud(request.form['profile'], word_string)
+	return jsonify({'src': wcloud, 'rating_sentiments': rating_sentiments})
 
 @app.route('/mongotest')
 @login_required
@@ -230,17 +236,8 @@ def access_db():
 @app.route('/getranking', methods=['GET'])
 def get_ranking():
 	# return jsonify({'ranked_list': ['DANIEL', 'SEBASTIAN', 'YEE']})
-	
-	db = mongoClient['360DB']
-	comments_collection = db['comments']
-	comments = []
-	for comment in comments_collection.find({}):
-		comments.append(comment)
-
-	ratings_collection = db['ratings']
-	ratings = []
-	for rating in ratings_collection.find({}):
-		ratings.append(rating)
+	comments = get_comments_from_mongo()
+	ratings = get_ratings_from_mongo()
 
 	ranking_dict = {}
 	for s in students:
@@ -251,6 +248,20 @@ def get_ranking():
 	# random.shuffle(ranked_list)
 	return jsonify({'ranked_list': ranked_list})
 
+def get_comments_from_mongo(query_filter={}):
+	comments_collection = mongodb['comments']
+	comments = []
+	for comment in comments_collection.find(query_filter):
+		comments.append(comment)
+	return comments
+
+def get_ratings_from_mongo(query_filter={}):
+	ratings_collection = mongodb['ratings']
+	ratings = []
+	for rating in ratings_collection.find(query_filter):
+		ratings.append(rating)
+	return ratings
+
 def compute_rating_sentiment(student, comments, ratings):
 	all_sentiments = [float(comment['sentimentScore']) for comment in comments if comment['givenTo'] == student]
 	all_ratings = [float(rate[1]) for rating in ratings if rating['givenTo'] == 'hi' for category in rating['ratings'].keys() for rate in rating['ratings'][category].items()]
@@ -259,5 +270,5 @@ def compute_rating_sentiment(student, comments, ratings):
 	return {'average_rating': average_rating, 'average_sentiment': average_sentiment}
 
 
-if __name__ == '__main__':
-	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+# if __name__ == '__main__':
+# 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))

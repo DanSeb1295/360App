@@ -10,7 +10,7 @@
 			<img id="loading-gif" src='{{ url_for("static", filename="images/loading.gif") }}' style='margin-top: 5%; position: absolute;'>
 			{% for student in students %}
 			<div class="flip-card" id="flip-card-{{loop.index}}" style="display: none">
-			<a id="profile-url-{{loop.index}}" href="" style="text-decoration: none">
+			<a id="profile-url-{{loop.index}}" href="/profile/{{student.replace(' ', '')}}" style="text-decoration: none">
 				<div id="flip-card-inner-{{loop.index}}" class="flip-card-inner" style="border-radius: 10px; height: 250px; width: 200px; margin: 4px; background-color: #FFF4E0; margin: 20px; box-shadow: -0px 0px 50px rgba(200, 200, 200, 1); position: relative">
 						<div class="flip-card-front" id="flip-card-front-{{loop.index}}">
 							<div class="student-name" style="display: -webkit-flex; -webkit-flex-flow: row wrap; display: flex; flex-flow: row wrap; background-color: #393E46; height: 30%; top: 0px; border-top-right-radius: 6px; border-top-left-radius: 6px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; border: 1px #FFF; justify-content: center; align-items: center;">
@@ -35,7 +35,7 @@
 							</div>
 						</div>
 						<div class="flip-card-back" id="flip-card-back-{{loop.index}}">
-							<div style="padding: 15px;">
+							<div style="padding: 15px; text-align: center; line-height: 100%; vertical-align: middle;">
 								<cite style="font-family: helvetica">
 								&quot;Nancy, I noticed at the meeting this morning that you got defensive when your data was challenged during your presentation. When Amy asked a question about your calculations, you were short with her and told her she needs to trust that you know how to do your job. When you responded to her that way, she shut down for the rest of the meeting and seemed angry. You really need her support, and I’m wondering if you’ll have it now. What are your thoughts?&quot;
 								</cite>	
