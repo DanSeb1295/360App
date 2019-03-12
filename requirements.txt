@@ -6,6 +6,7 @@ chardet==3.0.4
 Click==7.0
 cryptography==2.6.1
 cycler==0.10.0
+dnspython==1.16.0
 Flask==1.0.2
 Flask-Login==0.4.1
 Flask-Mail==0.9.1
@@ -33,6 +34,8 @@ requests==2.21.0
 requests-oauthlib==1.2.0
 six==1.12.0
 SQLAlchemy==1.2.18
+style==1.1.0
+update==0.0.1
 urllib3==1.24.1
 Werkzeug==0.14.1
 wordcloud==1.5.0
