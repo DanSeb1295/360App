@@ -227,7 +227,7 @@ def access_db():
 			return jsonify({'avatar': url_for("static", filename="images/placeholder.png")})
 	return dict(get_avatar=get_avatar)
 
-@app.route('/getranking', methods=['POST'])
+@app.route('/getranking', methods=['GET'])
 def get_ranking():
 	# return jsonify({'ranked_list': ['DANIEL', 'SEBASTIAN', 'YEE']})
 	
@@ -246,18 +246,18 @@ def get_ranking():
 	for s in students:
 		ranking_dict[s] = compute_rating_sentiment(s, comments, ratings)
 	
-	ranked_list = sorted(ranking_dict.keys(), key=lambda x: (ranking_dict[x]['average_rating'], ranking_dict[x]['average_sentiment']))
+	ranked_list = sorted(ranking_dict.keys(), key=lambda x: (ranking_dict[x]['average_rating'], ranking_dict[x]['average_sentiment']), reverse=True)
 	# import random
 	# random.shuffle(ranked_list)
 	return jsonify({'ranked_list': ranked_list})
 
 def compute_rating_sentiment(student, comments, ratings):
-	all_ratings = [comment['sentimentScore'] for comment in comments if comment['givenTo'] == student]
-	all_sentiments = [rate[1] for rating in ratings if rating['givenTo'] == 'hi' for category in rating['ratings'].keys() for rate in rating['ratings'][category].items()]
-	average_rating = sum(all_ratings) / len(all_ratings) if all_ratings else 0
+	all_sentiments = [float(comment['sentimentScore']) for comment in comments if comment['givenTo'] == student]
+	all_ratings = [float(rate[1]) for rating in ratings if rating['givenTo'] == 'hi' for category in rating['ratings'].keys() for rate in rating['ratings'][category].items()]
 	average_sentiment = sum(all_sentiments) / len(all_sentiments) if all_sentiments else 0
+	average_rating = sum(all_ratings) / len(all_ratings) if all_ratings else 0
 	return {'average_rating': average_rating, 'average_sentiment': average_sentiment}
 
 
-# if __name__ == '__main__':
-# 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+if __name__ == '__main__':
+	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))

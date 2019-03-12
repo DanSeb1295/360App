@@ -49,7 +49,7 @@
 	</div>
 <script type="text/javascript">
 	$(function() {
-		$.post('/getranking').done(function(response) {
+		$.get('/getranking').done(function(response) {
 			$("#loading-gif").remove()
 			for (let i = 0; i < response['ranked_list'].length; i++) { 
 				$(".flip-card").css("visibility", "visible")
