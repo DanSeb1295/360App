@@ -90,7 +90,8 @@ def users_db():
 def home():
 	if not current_user.is_authenticated:
 		return redirect(url_for('login'))
-	return render_template('home.html', current_user=current_user, students=students)
+	cur_user_team_list = get_teams_from_mongo(current_user.name)
+	return render_template('home.html', info=information, teamlist=cur_user_team_list, current_user=current_user, students=students)
 
 @app.route('/login')
 def login():
@@ -262,6 +263,14 @@ def get_ratings_from_mongo(query_filter={}):
 		ratings.append(rating)
 	return ratings
 
+def get_teams_from_mongo(name):
+	project_groupings_collection = mongodb['project_groupings']
+	project_groupings = {}
+	for project_grouping in project_groupings_collection.find({ 'members': name}):
+		project_groupings[project_grouping['projectNum']] = project_grouping['members']
+	return project_groupings
+
+
 def compute_rating_sentiment(student, comments, ratings):
 	all_sentiments = [float(comment['sentimentScore']) for comment in comments if comment['givenTo'] == student]
 	all_ratings = [float(rate[1]) for rating in ratings if rating['givenTo'] == 'hi' for category in rating['ratings'].keys() for rate in rating['ratings'][category].items()]
@@ -270,5 +279,5 @@ def compute_rating_sentiment(student, comments, ratings):
 	return {'average_rating': average_rating, 'average_sentiment': average_sentiment}
 
 
-# if __name__ == '__main__':
-# 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+if __name__ == '__main__':
+	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))

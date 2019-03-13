@@ -8353,8 +8353,11 @@ button.close {
 }
 /* Hide radio */
 .rate > input {
-    display: none;
+    opacity:0;
+    position: absolute;
 }
+
+
 /* Order correctly by floating highest to the right */
 .rate > label {
     float: right;
@@ -8368,19 +8371,21 @@ button.close {
     cursor: pointer;
     font-family: FontAwesome;
     content: "\f005 "; /* full star */
-    font-size: 30px
+    font-size: 20px
 }
 /* Zero stars rating */
-.rate > label:last-child:before {
-    content: "\f006 "; /* empty star outline */
-    font-size: 30px
-}
+/* empty star outline */
+/*.rate > label:last-child:before {
+    content: "\f006 "; 
+    font-size: 20px
+}*/
+
 /* Half star trick */
 .rate .half:before {
     content: "\f089 "; /* half star no outline */
     position: absolute;
     padding-right: 0;
-    font-size: 30px
+    font-size: 20px
 }
 /* Click + hover color */
 input:checked ~ label, /* color current and previous stars on checked */
