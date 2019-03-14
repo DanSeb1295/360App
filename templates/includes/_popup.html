@@ -14,18 +14,43 @@
   	</div>
   </div>
   <form action="/" class="form-container">
-    <input type="text" list="students-list" placeholder="To" name="target" autocomplete="on" required>
+    <input id="rr-list" type="text" list="students-list" placeholder="To" name="target" autocomplete="on" required>
     <datalist id="students-list">
-      {% for student in students%}
-        <option>{{student}}</option>
+      {% for student in students if student != current_user.name %}
+          <option>{{student}}</option>
       {% endfor %}
     </datalist>
-    <textarea placeholder="Type feedback..." name="msg" required></textarea>
-    <button type="submit" class="btn">Submit</button>
+    <textarea id="rr-comment" placeholder="Type feedback..." name="msg" required></textarea>
+    <button id="rr-button" type="submit" class="btn">Submit</button>
   </form>
 </div>
 
 <script>
+$( "button#rr-button" ).click(function() {
+    var teamlist = {{ teamlist | tojson}};
+    
+    var givenBy = String({{current_user.name | tojson }});
+    var projectNum = parseInt(0);
+    var givenTo = String($('#rr-list').val());
+    var commentText = String($('#rr-comment').val());
+    
+    $.post('/submitcomment', {
+            givenBy: givenBy,
+            givenTo: givenTo,
+            projectNum: projectNum,
+            commentText: commentText
+        }).done(function(response) {
+          if (response['response'] == 'Success') {
+            alert('Comment Submitted!')
+            closeForm()
+          } else if (response['response'] == 'Invalid Target') {
+            alert('Please make sure you have entered a valid name.')
+          }
+        }).fail(function() {
+            console.log('ERROR')
+        });
+  });
+
 function openForm() {
   document.getElementById("myForm").style.display = "block";
 }

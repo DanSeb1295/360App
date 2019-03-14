@@ -4,6 +4,7 @@ import logging
 import json
 import datetime
 import time
+import math
 from flask import Flask, flash, url_for, redirect, render_template, session, request, jsonify
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
@@ -33,6 +34,7 @@ login_manager = LoginManager(app)
 login_manager.login_view = "login"
 login_manager.session_protection = "strong"
 mongodb = mongoClient['360DB']
+cur_user_team_list = []
 
 """ DB Models """
 class User(db.Model, UserMixin):
@@ -43,7 +45,7 @@ class User(db.Model, UserMixin):
 	admin = db.Column(db.Integer, default=0)
 	avatar = db.Column(db.String(200))
 	tokens = db.Column(db.Text)
-	created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+	created_at = db.Column(db.DateTime, default=datetime.datetime.now())
 
 	@property
 	def serialize(self):
@@ -149,7 +151,7 @@ def callback():
 @login_required
 def ranking():
 	dataplots = visualise()[0]
-	return render_template('ranking.html', dataplots=dataplots, current_user=current_user, students=students)
+	return render_template('ranking.html', teamlist=cur_user_team_list, dataplots=dataplots, current_user=current_user, students=students)
 
 @app.route('/profile/<string:name>')
 @login_required
@@ -162,7 +164,7 @@ def profile(name):
 		else:
 			redirect(url_for('home'))
 	dataplots = visualise()
-	return render_template('profile.html', profile=profile, dataplots=dataplots, current_user=current_user, students=students)
+	return render_template('profile.html', teamlist=cur_user_team_list, profile=profile, dataplots=dataplots, current_user=current_user, students=students)
 
 # @app.route('/statistics')
 # @login_required
@@ -173,7 +175,7 @@ def profile(name):
 @app.route('/info')
 @login_required
 def info():
-	return render_template('/info.html', info=information, current_user=current_user, students=students)
+	return render_template('/info.html', teamlist=cur_user_team_list, info=information, current_user=current_user, students=students)
 
 @app.route('/logout')
 @login_required
@@ -214,10 +216,152 @@ def getwordcloud():
 	comments = get_comments_from_mongo({'givenTo': request.form['profile']})
 	ratings = get_ratings_from_mongo({'givenTo': request.form['profile']})
 	rating_sentiments = compute_rating_sentiment(request.form['profile'], comments, ratings)
-	print(request.url)
 	word_string = ' '.join([comment['commentText'] for comment in comments])
 	wcloud = wordcloud(request.form['profile'], word_string)
 	return jsonify({'src': wcloud, 'rating_sentiments': rating_sentiments})
+
+# TODO
+def get_sentiment_score(comment):
+	return float(0)
+
+@app.route('/submitcomment', methods=['POST'])
+@login_required
+def submitcomment():
+	cur_time = datetime.datetime.now()
+	new_comment_id = None
+
+	try:
+		# Creates mongodb comment object according to schema
+		comment = comments_schema.copy()
+		print('>>>>', request.form)
+		comment['givenBy'] = str(request.form['givenBy'])
+		comment['givenTo'] = str(request.form['givenTo'])
+		comment['projectNum'] = int(request.form['projectNum'])
+		comment['commentText'] = str(request.form['commentText'])
+
+		comment['submittedAt'] = cur_time
+		comment['sentimentScore'] = get_sentiment_score(comment['commentText'])
+
+		comment_is_valid = validate_comment(comment)
+		print('>>>> VALID', comment_is_valid)
+
+		if comment['givenTo'] not in students:
+			response = 'Invalid Target'
+		elif comment_is_valid:
+			comment['referenceFeedback'] = ''
+			new_comment_id = str(mongodb['comments'].insert_one(comment).inserted_id)
+
+			if new_comment_id:
+				response = 'Success'
+			else:
+				response = 'Server/ Database Error'
+		else:
+			response = 'Invalid'
+	except:
+		response = 'Error: Cannot Submit Post'
+	
+	return jsonify({'response': response, 'new_comment_id': new_comment_id})
+
+@app.route('/submitform', methods=['POST'])
+@login_required
+def submitform():
+	cur_time = datetime.datetime.now()
+	new_rating_id = None
+	new_comment_id = None
+
+	try: 
+		# Creates mongodb rating object according to schema
+		rating = ratings_schema.copy()
+		rating['givenBy'] = str(request.form['givenBy'])
+		rating['givenTo'] = str(request.form['givenTo'])
+		rating['projectNum'] = int(request.form['projectNum'])
+		rating['teamNum'] = int(request.form['teamNum'])
+		rating['submittedAt'] = cur_time
+		for i in range(1, 4):
+			q_num = 'q{}'.format(i)
+			val = float(request.form['ratings[{}]'.format(q_num)])
+			rating['ratings']['workEthic'][q_num] = val
+		for i in range(4, 7):
+			q_num = 'q{}'.format(i)
+			val = float(request.form['ratings[{}]'.format(q_num)])
+			rating['ratings']['teamEffectiveness'][q_num] = val
+		for i in range(7, 10):
+			q_num = 'q{}'.format(i)
+			val = float(request.form['ratings[{}]'.format(q_num)])
+			rating['ratings']['thinkingSkills'][q_num] = val
+		for i in range(10, 13):
+			q_num = 'q{}'.format(i)
+			val = float(request.form['ratings[{}]'.format(q_num)])
+			rating['ratings']['competence'][q_num] = val
+		for i in range(13, 16):
+			q_num = 'q{}'.format(i)
+			val = float(request.form['ratings[{}]'.format(q_num)])
+			rating['ratings']['presence'][q_num] = val
+
+		# Creates mongodb comment object according to schema
+		comment = comments_schema.copy()
+		comment['givenBy'] = str(request.form['givenBy'])
+		comment['givenTo'] = str(request.form['givenTo'])
+		comment['projectNum'] = int(request.form['projectNum'])
+		comment['commentText'] = str(request.form['commentText'])
+		comment['submittedAt'] = cur_time
+		comment['sentimentScore'] = get_sentiment_score(comment['commentText'])
+
+		rating_is_valid = validate_rating(rating)
+		comment_is_valid = validate_comment(comment)
+		
+		if rating_is_valid and comment_is_valid:
+			new_rating_id = str(mongodb['ratings'].insert_one(rating).inserted_id)
+			comment['referenceFeedback'] = new_rating_id
+			new_comment_id = str(mongodb['comments'].insert_one(comment).inserted_id)
+
+			if new_rating_id and new_comment_id:
+				response = 'Success'
+			else:
+				response = 'Server/ Database Error'
+		else:
+			response = 'Invalid'
+		
+	except:
+		response = 'Error: Cannot Submit Post'
+
+	return jsonify({'response': response, 'new_rating_id': new_rating_id, 'new_comment_id': new_comment_id})
+
+def validate_rating(rating):
+	try:
+		if rating['givenBy'] == rating['givenTo']:
+			return False
+		if rating['givenBy'] and isinstance(rating['givenBy'], str):
+			if rating['givenTo'] and isinstance(rating['givenTo'], str):
+				if rating['projectNum'] and isinstance(rating['projectNum'], int):
+					if rating['teamNum'] and isinstance(rating['teamNum'], int):
+						for category, responses in rating['ratings'].items():
+							for question, value in responses.items():
+								if value and isinstance(value, float) and not math.isnan(value):
+									continue
+								else:
+									return False
+						return True
+	except:
+		return False
+	return False
+
+def validate_comment(comment):
+	if comment['givenBy'] == comment['givenTo']:
+		print('>>sameperson')
+		return False
+	if comment['commentText'] and isinstance(comment['commentText'], str):
+		print('>>CommentFilled')
+		if comment['givenBy'] and isinstance(comment['givenBy'], str):
+			print('>>thereisagivenby')
+			if comment['givenTo'] and isinstance(comment['givenTo'], str):
+				print('>>thereisagivento')
+				if (comment['projectNum'] or comment['projectNum'] == 0) and isinstance(comment['projectNum'], int):
+					print('>>thereisaprojNum')
+					if isinstance(comment['sentimentScore'], float):
+						print('>>sentScore')
+						return True
+	return False
 
 @app.route('/mongotest')
 @login_required
@@ -267,7 +411,7 @@ def get_teams_from_mongo(name):
 	project_groupings_collection = mongodb['project_groupings']
 	project_groupings = {}
 	for project_grouping in project_groupings_collection.find({ 'members': name}):
-		project_groupings[project_grouping['projectNum']] = project_grouping['members']
+		project_groupings[project_grouping['projectNum']] = {'team_num': project_grouping['teamNum'], 'members': project_grouping['members']}
 	return project_groupings
 
 
@@ -279,5 +423,5 @@ def compute_rating_sentiment(student, comments, ratings):
 	return {'average_rating': average_rating, 'average_sentiment': average_sentiment}
 
 
-if __name__ == '__main__':
-	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+# if __name__ == '__main__':
+# 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))

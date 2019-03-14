@@ -1,11 +1,8 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='_sidebar.css') }}">
-<div id="mySidenav" class="sidenav">
+<div id="mySidenav" class="sidenav" style="width: 250px">
 	<div style="padding-bottom: 20px">
 		<span>
 		<input id="mySearch" style="padding-left: 20px; background-color: #393E46; color: #00ADB5; border: 0; height: 30px" type="text" placeholder="Search..." onkeyup="filterResults()">
-		</span>
-		<span>
-	  		<a href="javascript:void(0)" class="closebtn" onclick="toggleNav()">&lt;</a>
 		</span>
 	</div>
   {% for student in students %}

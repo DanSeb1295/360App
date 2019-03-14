@@ -10,41 +10,42 @@ comments_schema = {
 	'commentText': str,
 	'givenBy': str,
 	'givenTo': str,
-	'datetime': datetime,
-	'referenceFeedback': int,
+	'submittedAt': datetime,
+	'projectNum': int,
+	'referenceFeedback': str,
 	'sentimentScore': float
 }
 
 ratings_schema = {
 	'givenBy': str,
-	'datetime': datetime,
+	'submittedAt': datetime,
 	'projectNum': int,
 	'teamNum': int,
 	'givenTo': str,
 	'ratings': {
 		'workEthic': {
 			'q1': float,
-			'q6': float,
-			'q11': float
+			'q2': float,
+			'q3': float
 		},
 		'teamEffectiveness': {
-			'q2': float,
-			'q7': float,
-			'q12': float
+			'q4': float,
+			'q5': float,
+			'q6': float
 		},
 		'thinkingSkills': {
-			'q3': float,
+			'q7': float,
 			'q8': float,
-			'q13': float
+			'q9': float
 		},
 		'competence': {
-			'q4': float,
-			'q9': float,
-			'q14': float
+			'q10': float,
+			'q11': float,
+			'q12': float
 		},
 		'presence': {
-			'q5': float,
-			'q10': float,
+			'q13': float,
+			'q14': float,
 			'q15': float
 		}	
 	}

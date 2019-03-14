@@ -43,29 +43,29 @@ class ProdConfig(Config):
 
 information = {
     "Work Ethic": [
-        "Reliability: How confident are you that this person will do what they say they will do, when they said they will do it by",
-        "Time Management: Is this person on time, with meetings as well as with deadlines",
-        "Self Motivation: To what extent is this person enthusiastic about working towards the team’s objectives"
+        "Reliability: How confident are you that this person will do what he/ she say he/ she will do, by when he/ she said he/ she will do it by?",
+        "Time Management: To what extent is this person on time, with meetings as well as with deadlines?",
+        "Self Motivation: To what extent is this person enthusiastic about working towards the team’s objectives?"
     ],
     "Team Effectiveness": [
-        "Likeability: To what extent do you enjoy working with this person",
-        "Team Player: To what extent does this person listen and look out to others and put the team’s interest beyond their own",
-        "Communication: To what extent is this person open, sincere, and effective in their communication to other members of the team"
+        "Likeability: How much do you enjoy working with this person?",
+        "Team Player: To what extent does this person listen and look out to others and put the team’s interest beyond his/ her own?",
+        "Communication: How open, sincere, and effective is this person in his/ her communication to other members of the team?"
     ],
     "Thinking Skills" : [
-        "Creativity: How well is this person able to think laterally and generate useful and innovative ideas",
-        "Critical Thining: How well is this person able to navigate and make sense of all available information, and/ or deal with the lack of it",
-        "Insightfulness: To what extent is this person able to come up with key insights that others don’t"
+        "Creativity: How well is this person able to think laterally and generate useful and innovative ideas?",
+        "Critical Thining: How well is this person able to navigate and make sense of all available information, and/ or deal with the lack of it?",
+        "Insightfulness: To what extent is this person able to come up with key insights that others don’t?"
     ],
     "Competence": [
-        "Quality of Work: To what extent does this person produce quality work",
-        "Skills: To what extent has this person applied their skills, and/or acquired new skills, to make a meaningful impact on the project",
-        "Resourcefulness: How well does this person work under/ around constraints"
+        "Quality of Work: To what extent does this person produce quality work?",
+        "Skills: To what extent has this person applied his/ her skills, and/or acquired new skills, to make a meaningful impact on the project?",
+        "Resourcefulness: How well does this person work under/ around constraints?"
     ],
     "Presence": [
-        "Commitment: How much commitment does this person display to the team (attending meetings, OHs, etc.)",
-        "Indispensability: How much difference would it make to the team if this person were absent from the team",
-        "Influence: To what extent is this person able to motivate the team to continually work towards the team’s objectives"
+        "Commitment: How much commitment does this person display to the team (meetings, OHs, etc.)?",
+        "Indispensability: How much difference would it make to the team if this person were absent from the team?",
+        "Influence: To what extent is this person able to motivate the team to continually work towards the team’s objectives?"
     ]
 }
 
