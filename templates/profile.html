@@ -72,25 +72,13 @@
 		<div style="margin: 20px; margin-bottom: 0px; font-size: 25px; font-family: 'Helvetica Light'; letter-spacing: 2px; color: #777">
 			Feedback
 		</div> -->
-		{% if (current_user.name == profile or current_user.admin) %}
+			{% if (current_user.name == profile or current_user.admin) %}
 			<div style="margin: 20px; margin-bottom: 0px; font-size: 25px; font-family: 'Helvetica Light'; letter-spacing: 2px; color: #777">
 				Feedback
 			</div>
-			<div style="display: -webkit-flex; -webkit-flex-flow: row; display: flex; flex-flow: row; width: calc(100% - 40px); height: 100%; justify-content: flex-start; margin: 10px; margin-bottom: 20px; overflow-x: auto; position:relative; overflow-y: hidden">
-				{% for i in range(5) %}
-					<div class="zoom">
-							<cite style="font-family: Helvetica-Light; font-size: 15px; color: #555">
-							&quot;Nancy, I noticed at the meeting this morning that you got defensive when your data was challenged during your presentation. When Amy asked a question about your calculations, you were short with her and told her she needs to trust that you know how to do your job. When you responded to her that way, she shut down for the rest of the meeting and seemed angry. You really need her support, and I’m wondering if you’ll have it now. What are your thoughts? &quot;
-							</cite>	
-					</div>
-					<div class="zoom">
-							<cite style="font-family: Helvetica-Light; font-size: 15px; color: #555">
-							&quot;Nancy, I noticed at the meeting this morning that you got defensive when your data was challenged during your presentation.&quot;
-							</cite>	
-					</div>
-				{% endfor %}
-			</div>
-		{% endif %}
+				<div id="feedback-feed" style="display: -webkit-flex; -webkit-flex-flow: row; display: flex; flex-flow: row; width: calc(100% - 40px); height: 100%; justify-content: flex-start; margin: 10px; margin-bottom: 20px; overflow-x: auto; position:relative; overflow-y: hidden">
+				</div>
+			{% endif %}
 	</div>
 	<style>
 		.zoom {
@@ -118,6 +106,19 @@
                 $("#wordcloud").html(wcloud)
             }).fail(function() {
                 $("#wordcloud").text("Error: Failed to generate wordcloud");
+            });
+
+            $.post('/getcomments', {
+            	profile: '{{ profile }}'
+            }).done(function(response) {
+            	var feedback = response['feedback']
+            	$('#feedback-feed').html('')
+            	for (let i = 0; i < feedback.length; i++) {
+            		let template = '<div class="zoom">' + '<h4>Project ' + feedback[i]['projectNum'] + '</h4>' + '<cite style="font-family: Helvetica-Light; font-size: 15px; color: #555">' + '&quot;' + feedback[i]['commentText'] + '&quot;' + '</div>'
+            		$('#feedback-feed').append(template)
+            	}
+            }).fail(function() {
+            	$('#feedback-feed').text('Error: Failed to retrieve feedback from database')
             });
 		});
 	</script>

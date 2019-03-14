@@ -233,7 +233,6 @@ def submitcomment():
 	try:
 		# Creates mongodb comment object according to schema
 		comment = comments_schema.copy()
-		print('>>>>', request.form)
 		comment['givenBy'] = str(request.form['givenBy'])
 		comment['givenTo'] = str(request.form['givenTo'])
 		comment['projectNum'] = int(request.form['projectNum'])
@@ -243,7 +242,6 @@ def submitcomment():
 		comment['sentimentScore'] = get_sentiment_score(comment['commentText'])
 
 		comment_is_valid = validate_comment(comment)
-		print('>>>> VALID', comment_is_valid)
 
 		if comment['givenTo'] not in students:
 			response = 'Invalid Target'
@@ -348,18 +346,12 @@ def validate_rating(rating):
 
 def validate_comment(comment):
 	if comment['givenBy'] == comment['givenTo']:
-		print('>>sameperson')
 		return False
 	if comment['commentText'] and isinstance(comment['commentText'], str):
-		print('>>CommentFilled')
 		if comment['givenBy'] and isinstance(comment['givenBy'], str):
-			print('>>thereisagivenby')
 			if comment['givenTo'] and isinstance(comment['givenTo'], str):
-				print('>>thereisagivento')
 				if (comment['projectNum'] or comment['projectNum'] == 0) and isinstance(comment['projectNum'], int):
-					print('>>thereisaprojNum')
 					if isinstance(comment['sentimentScore'], float):
-						print('>>sentScore')
 						return True
 	return False
 
@@ -378,9 +370,17 @@ def access_db():
 			return jsonify({'avatar': url_for("static", filename="images/placeholder.png")})
 	return dict(get_avatar=get_avatar)
 
+@app.route('/getcomments', methods=['POST'])
+def get_comments():
+	feedbacks = get_comments_from_mongo({'givenTo': request.form['profile']})
+	for feedback in feedbacks:
+		feedback.pop('_id', None)
+
+	sorted_feedback = sorted(feedbacks, key=lambda x: x.get('submittedAt'), reverse=True)
+	return jsonify({'feedback': sorted_feedback})
+
 @app.route('/getranking', methods=['GET'])
 def get_ranking():
-	# return jsonify({'ranked_list': ['DANIEL', 'SEBASTIAN', 'YEE']})
 	comments = get_comments_from_mongo()
 	ratings = get_ratings_from_mongo()
 
@@ -389,8 +389,7 @@ def get_ranking():
 		ranking_dict[s] = compute_rating_sentiment(s, comments, ratings)
 	
 	ranked_list = sorted(ranking_dict.keys(), key=lambda x: (ranking_dict[x]['average_rating'], ranking_dict[x]['average_sentiment']), reverse=True)
-	# import random
-	# random.shuffle(ranked_list)
+
 	return jsonify({'ranked_list': ranked_list})
 
 def get_comments_from_mongo(query_filter={}):
@@ -417,7 +416,7 @@ def get_teams_from_mongo(name):
 
 def compute_rating_sentiment(student, comments, ratings):
 	all_sentiments = [float(comment['sentimentScore']) for comment in comments if comment['givenTo'] == student]
-	all_ratings = [float(rate[1]) for rating in ratings if rating['givenTo'] == 'hi' for category in rating['ratings'].keys() for rate in rating['ratings'][category].items()]
+	all_ratings = [float(rate[1]) for rating in ratings if rating['givenTo'] == student for category in rating['ratings'].keys() for rate in rating['ratings'][category].items()]
 	average_sentiment = sum(all_sentiments) / len(all_sentiments) if all_sentiments else 0
 	average_rating = sum(all_ratings) / len(all_ratings) if all_ratings else 0
 	return {'average_rating': average_rating, 'average_sentiment': average_sentiment}
