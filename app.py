@@ -150,8 +150,12 @@ def callback():
 @app.route('/ranking')
 @login_required
 def ranking():
-	dataplots = visualise()[0]
-	return render_template('ranking.html', teamlist=cur_user_team_list, dataplots=dataplots, current_user=current_user, students=students)
+	return render_template('ranking.html', teamlist=cur_user_team_list, current_user=current_user, students=students)
+
+@app.route('/admin')
+@login_required
+def admin():
+	return render_template('admin.html', teamlist=cur_user_team_list, current_user=current_user, students=students)
 
 @app.route('/profile/<string:name>')
 @login_required

@@ -1,0 +1,76 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div style="display: -webkit-flex; -webkit-flex-flow: column; display: flex; flex-flow: column; width: 100%; height: auto; justify-content: flex-start;"> 
+	<div style="display: -webkit-flex; -webkit-flex-flow: row; display: flex; flex-flow: row; width: 100%; height: auto; justify-content: space-between; background-color: #fff; box-shadow: -5px 5px 5px rgba(100, 100, 100, 0.1);">
+		<span style="margin: 20px; width: 20%; text-align: center; color: #555; padding-top: 10px">
+			Name
+		</span>
+		<span style="margin: 20px 5px; width: 10%; text-align: center; color: #555; padding-top: 5px">
+			Work<br>Ethic
+		</span>
+		<span style="margin: 20px 5px; width: 10%; text-align: center; color: #555; padding-top: 5px">
+			Team<br>Effectiveness
+		</span>
+		<span style="margin: 20px 5px; width: 10%; text-align: center; color: #555; padding-top: 5px">
+			Thinking<br>Skills
+		</span>
+		<span style="margin: 20px 5px; width: 10%; text-align: center; color: #555; padding-top: 10px">
+			Competence
+		</span>
+		<span style="margin: 20px 5px; width: 10%; text-align: center; color: #555; padding-top: 10px">
+			Presence
+		</span>
+		<span style="margin: 20px 5px; width: 10%; text-align: center; color: #555; padding-top: 5px">
+			Overall<br>Grade
+		</span>
+		<span style="margin: 20px; margin-right: 30px; width: 5%; text-align: center; vertical-align: center">
+			<a href="/static/images/download.png" download>
+				<img src="/static/images/download.png" style=" width: 30px; height: 30px;">
+			</a>
+		</span>
+	</div>
+</div>
+<div id="leaderboard" style="display: -webkit-flex; -webkit-flex-flow: column; display: flex; flex-flow: column; width: 100%; min-height: 300px; height: 500px; justify-content: flex-start; margin-top: 10px; overflow-y: scroll">
+	{% for student in students%}
+		<div style="background-color: #fff; margin: 1px 0px; height: 100px">
+			<span id="name-{{ loop.index }}" style="margin: 20px; width: 20%; text-align: center; color: #555; padding-top: 5px"></span>
+			<span id="work-ethic-{{ loop.index }}" style="margin: 20px 3px; width: 10%; text-align: center; color: #555; padding-top: 5px"></span>
+			<span id="team-effectiveness-{{ loop.index }}" style="margin: 20px 3px; width: 10%; text-align: center; color: #555; padding-top: 5px"></span>
+			<span id="thinking-skills-{{ loop.index }}" style="margin: 20px 3px; width: 10%; text-align: center; color: #555; padding-top: 5px"></span>
+			<span id="competence-{{ loop.index }}" style="margin: 20px 3px; width: 10%; text-align: center; color: #555; padding-top: 5px"></span>
+			<span id="presence-{{ loop.index }}" style="margin: 20px 3px; width: 10%; text-align: center; color: #555; padding-top: 5px"></span>
+			<span id="overall-grade-{{ loop.index }}" style="margin: 20px 3px; width: 10%; text-align: center; color: #555; padding-top: 5px"></span>
+		</div>
+	{% endfor %}
+</div>
+<script type="text/javascript">
+	$(function() {
+		$.get('/getranking').done(function(response) {
+			for (let i = 0; i < response['ranked_list'].length; i++) {
+				let counter = i + 1
+				let student = response['ranked_list'][i]['name']
+				let ratings = response['ranked_list'][i]['ratings']
+
+				let nameQuery = '#name-' + String(counter)
+				let workEthicQuery = '#work-ethic-' + String(counter)
+				let teamEffectivenessQuery = '#team-effectiveness-' + String(counter)
+				let thinkingSkillsQuery = '#thinking-skills-' + String(counter)
+				let competenceQuery = '#competence-' + String(counter)
+				let presenceQuery = '#presence-' + String(counter)
+				let overallGradeQuery = '#overall-grade-' + String(counter)
+
+				$(nameQuery).html(student)
+				$(workEthicQuery).html(ratings['workEthic'])
+				$(teamEffectivenessQuery).html(ratings['teamEffectiveness'])
+				$(thinkingSkillsQuery).html(ratings['thinkingSkills'])
+				$(competenceQuery).html(ratings['competence'])
+				$(presenceQuery).html(ratings['presence'])
+				$(overallGradeQuery).html(ratings['grade'])
+			}
+		}).fail(function() {
+            $("#leaderboard").text("Error: Failed to generate rankings");
+        });
+	});
+</script>
+{% endblock %}
