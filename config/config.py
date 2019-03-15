@@ -1,5 +1,7 @@
 import os
 from os import urandom
+from pygal.style import Style
+
 
 DUE_DAY = 6
 MAIL_USERNAME = '360ieor171@gmail.com'
@@ -7,6 +9,8 @@ MAIL_PASSWORD = 'stephentorres'
 MONGO_USER = '360App'
 MONGO_PASSWORD = 'stephentorres'
 MONGO_URI = 'mongodb+srv://{}:{}@cluster0-7qgtl.mongodb.net/test?retryWrites=true'.format(MONGO_USER, MONGO_PASSWORD)
+IBM_API = 'TDpw3n7IRfG1k9Lus73e6HNOb1MfoXzRywivqoBhT-40'
+IBM_URL = 'https://gateway.watsonplatform.net/natural-language-understanding/api'
 
 basedir = os.path.abspath(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
 
@@ -23,6 +27,21 @@ GRADES = {
     1: 'D+',
     0: 'D'
 }
+
+pygal_style = Style(
+  background='transparent',
+  plot_background='transparent',
+  foreground='#333',
+  foreground_strong='#555',
+  foreground_subtle='#888',
+  opacity='0.8',
+  opacity_hover='1',
+  transition='10ms ease-in',
+  colors=('#475069', '#8E9FBB', '#D7D4E5', '#FF5733', '#FFC300'),
+  font_family='Helvetica Neue',
+  legend_font_size=15.0,
+  title_font_size=17.5,
+  label_font_size=15.0)
 
 class Auth:
     """Google Project Credentials"""

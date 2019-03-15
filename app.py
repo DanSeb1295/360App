@@ -5,6 +5,8 @@ import json
 import datetime
 import time
 import math
+import json
+import pygal
 from flask import Flask, flash, url_for, redirect, render_template, session, request, jsonify
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
@@ -12,10 +14,13 @@ from flask_login import LoginManager, login_required, login_user, logout_user, c
 from pymongo import MongoClient
 from requests_oauthlib import OAuth2Session
 from requests.exceptions import HTTPError
-from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_accounts, students, information, DUE_DAY, MAIL_USERNAME, MAIL_PASSWORD, MONGO_URI, GRADES
+from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_accounts, students, information, DUE_DAY, MAIL_USERNAME, MAIL_PASSWORD, MONGO_URI, GRADES, IBM_API, IBM_URL, pygal_style
 from models.schemas import project_groupings_schema, comments_schema, ratings_schema, articles_schema
 from util.export_sheets import export_to_sheet
 from util.data import visualise, wordcloud
+from watson_developer_cloud import NaturalLanguageUnderstandingV1
+from watson_developer_cloud.natural_language_understanding_v1 import Features, SentimentOptions
+
 
 config = {
 	"dev": DevConfig,
@@ -36,6 +41,11 @@ login_manager.login_view = "login"
 login_manager.session_protection = "strong"
 mongodb = mongoClient['360DB']
 cur_user_team_list = []
+natural_language_understanding = NaturalLanguageUnderstandingV1(
+    version='2018-11-16',
+    iam_apikey=IBM_API,
+    url=IBM_URL
+)
 
 """ DB Models """
 class User(db.Model, UserMixin):
@@ -224,8 +234,15 @@ def getwordcloud():
 	wcloud = wordcloud(request.form['profile'], word_string)
 	return jsonify({'src': wcloud})
 
-# TODO
 def get_sentiment_score(comment):
+	try:
+		response = natural_language_understanding.analyze(text=comment,
+			features=Features(sentiment=SentimentOptions())).get_result()
+
+		return float(response['sentiment']['document']['score'])
+	except:
+		pass
+
 	return float(0)
 
 @app.route('/submitcomment', methods=['POST'])
@@ -379,8 +396,19 @@ def get_ratings():
 		rating.pop('_id', None)
 
 	result = compute_rating_sentiment(profile, ratings)
+
+	line_chart = pygal.Bar(stroke=False, style=pygal_style)
+	line_chart.title = 'Character Ratings Across Projects'
+	line_chart.x_labels = 'Project 1', 'Project 2', 'Project 3', 'Project 4'
+	line_chart.add('Work Ethic', [2, 5, 8, 7])
+	line_chart.add('Team Effectiveness',  [3.9, 9.8, 6.8, 5.3])
+	line_chart.add('Thinking Skills',      [8.8, 8.6, 8.7, 7.5])
+	line_chart.add('Competence',  [9.4,  8.9,  6.8,  7.5])
+	line_chart.add('Presence',  [8.2, 3.4, 4.3,  8.9])
+	line_chart.render()
+	scatter_plot = line_chart.render_data_uri()
 	
-	return jsonify({'ratings': result})
+	return jsonify({'ratings': result, 'scatter_plot': scatter_plot})
 
 @app.route('/getcomments', methods=['POST'])
 def get_comments():
@@ -467,11 +495,17 @@ def compute_rating_sentiment(student, ratings, comments=[]):
 	average_sentiment = sum(all_sentiments) / len(all_sentiments) if all_sentiments else 0
 	average_rating = cur_rating['total']['runningTotal'] / cur_rating['total']['numQuestions'] if cur_rating['total']['numQuestions'] > 0 else 0
 
-	workEthic = round(cur_rating['workEthic']['runningTotal'] / cur_rating['workEthic']['numQuestions']) if cur_rating['workEthic']['numQuestions'] > 0 else 0
-	teamEffectiveness = round(cur_rating['teamEffectiveness']['runningTotal'] / cur_rating['teamEffectiveness']['numQuestions']) if cur_rating['teamEffectiveness']['numQuestions'] > 0 else 0
-	thinkingSkills = round(cur_rating['thinkingSkills']['runningTotal'] / cur_rating['thinkingSkills']['numQuestions']) if cur_rating['thinkingSkills']['numQuestions'] > 0 else 0
-	competence = round(cur_rating['competence']['runningTotal'] / cur_rating['competence']['numQuestions']) if cur_rating['competence']['numQuestions'] > 0 else 0
-	presence = round(cur_rating['presence']['runningTotal'] / cur_rating['presence']['numQuestions']) if cur_rating['presence']['numQuestions'] > 0 else 0
+	workEthicRaw = cur_rating['workEthic']['runningTotal'] / cur_rating['workEthic']['numQuestions'] if cur_rating['workEthic']['numQuestions'] > 0 else 0
+	teamEffectivenessRaw = cur_rating['teamEffectiveness']['runningTotal'] / cur_rating['teamEffectiveness']['numQuestions'] if cur_rating['teamEffectiveness']['numQuestions'] > 0 else 0
+	thinkingSkillsRaw = cur_rating['thinkingSkills']['runningTotal'] / cur_rating['thinkingSkills']['numQuestions'] if cur_rating['thinkingSkills']['numQuestions'] > 0 else 0
+	competenceRaw = cur_rating['competence']['runningTotal'] / cur_rating['competence']['numQuestions'] if cur_rating['competence']['numQuestions'] > 0 else 0
+	presenceRaw = cur_rating['presence']['runningTotal'] / cur_rating['presence']['numQuestions'] if cur_rating['presence']['numQuestions'] > 0 else 0
+
+	workEthic = round(workEthicRaw)
+	teamEffectiveness = round(teamEffectivenessRaw)
+	thinkingSkills = round(thinkingSkillsRaw)
+	competence = round(competenceRaw)
+	presence = round(presenceRaw)
 
 	cur_grade = GRADES.get(round(average_rating), 'D')
 	workEthicGrade = GRADES.get(workEthic, 'D')
@@ -484,8 +518,10 @@ def compute_rating_sentiment(student, ratings, comments=[]):
 			'workEthic': workEthic, 'teamEffectiveness': teamEffectiveness, 'thinkingSkills': thinkingSkills,
 			'competence': competence, 'presence': presence, 'workEthicGrade': workEthicGrade,
 			'teamEffectivenessGrade': teamEffectivenessGrade, 'thinkingSkillsGrade': thinkingSkillsGrade,
-			'competenceGrade': competenceGrade, 'presenceGrade': presenceGrade}
+			'competenceGrade': competenceGrade, 'presenceGrade': presenceGrade, 'workEthicRaw': workEthicRaw,
+			'teamEffectivenessRaw': teamEffectivenessRaw, 'thinkingSkillsRaw': thinkingSkillsRaw, 'competenceRaw': competenceRaw,
+			'presenceRaw': presenceRaw}
 
 
-if __name__ == '__main__':
-	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+# if __name__ == '__main__':
+# 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))

@@ -18,13 +18,11 @@ def visualise():
 
 def wordcloud(profile, word_string):
 	# Create a list of word (https://en.wikipedia.org/wiki/Data_visualization)
-	text1="This is a sample wordcloud that is being displayed because you have not received any comments yet."
-	text=word_string if word_string else text1
-	# Load the image
-	# cloud_mask = np.array(Image.open(base_path + '/static/images/cloud.png'))
+	# text1="This is a sample wordcloud that is being displayed because you have not received any comments yet."
+	text=word_string if word_string else "WordCloud"
 	 
 	# Make the figure
-	wordcloud = WordCloud(background_color="#efefef", width=1600, height=400, stopwords=STOPWORDS).generate(text)
+	wordcloud = WordCloud(background_color="rgba(255, 255, 255, 0)", mode="RGBA", width=1600, height=400, stopwords=STOPWORDS).generate(text)
 
 	# Save Img
 	if not profile:
