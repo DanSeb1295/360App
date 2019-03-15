@@ -14,7 +14,7 @@ from requests_oauthlib import OAuth2Session
 from requests.exceptions import HTTPError
 from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_accounts, students, information, DUE_DAY, MAIL_USERNAME, MAIL_PASSWORD, MONGO_URI, GRADES
 from models.schemas import project_groupings_schema, comments_schema, ratings_schema, articles_schema
-from util.export_csv import export_csv
+from util.export_sheets import export_to_sheet
 from util.data import visualise, wordcloud
 
 config = {
@@ -405,8 +405,8 @@ def get_ranking():
 	
 	return jsonify({'ranked_list': ranked_list})
 
-@app.route('/getcsv', methods=['GET'])
-def get_csv():
+@app.route('/exportsheet', methods=['GET'])
+def export_sheet():
 	comments = get_comments_from_mongo()
 	ratings = get_ratings_from_mongo()
 
@@ -417,7 +417,7 @@ def get_csv():
 	ranked_namelist = sorted(ranking_dict.keys(), key=lambda x: (ranking_dict[x]['average_rating'], ranking_dict[x]['average_sentiment']), reverse=True)
 	ranked_list = [{'name': student, 'ratings': ranking_dict[student]} for student in ranked_namelist]
 	
-	export_csv(ranked_list)
+	export_to_sheet(ranked_list)
 
 	return jsonify({'ranked_list': ranked_list})
 

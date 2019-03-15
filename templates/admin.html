@@ -25,9 +25,9 @@
 			<b>Overall<br>Grade</b>
 		</span>
 		<span style="margin: 20px; margin-right: 30px; width: 5%; text-align: center; vertical-align: center">
-			<a href="/csv/IEOR171_Team_Grades.csv" download>
-				<img src="/static/images/download.png" style=" width: 30px; height: 30px;">
-			</a>
+			<span style="cursor: pointer">
+				<img id="export-sheets" src="/static/images/export.png" style=" width: 30px; height: 30px;">
+			</span>
 		</span>
 	</div>
 </div>
@@ -46,7 +46,7 @@
 </div>
 <script type="text/javascript">
 	$(function() {
-		$.get('/getcsv').done(function(response) {
+		$.get('/getranking').done(function(response) {
 			for (let i = 0; i < response['ranked_list'].length; i++) {
 				let counter = i + 1
 				let student = response['ranked_list'][i]['name']
@@ -72,5 +72,13 @@
             $("#leaderboard").text("Error: Failed to generate rankings");
         });
 	});
+
+	$( "#export-sheets" ).click(function() {
+		$.get('/exportsheet').done(function(response) {
+			alert('Succesfully exported to google sheets!')
+		}).fail(function() {
+			alert('Failed to export to sheets')
+		})
+	})
 </script>
 {% endblock %}
