@@ -14,6 +14,7 @@ from requests_oauthlib import OAuth2Session
 from requests.exceptions import HTTPError
 from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_accounts, students, information, DUE_DAY, MAIL_USERNAME, MAIL_PASSWORD, MONGO_URI, GRADES
 from models.schemas import project_groupings_schema, comments_schema, ratings_schema, articles_schema
+from util.export_csv import export_csv
 from util.data import visualise, wordcloud
 
 config = {
@@ -219,10 +220,9 @@ def automail():
 def getwordcloud():
 	comments = get_comments_from_mongo({'givenTo': request.form['profile']})
 	ratings = get_ratings_from_mongo({'givenTo': request.form['profile']})
-	rating_sentiments = compute_rating_sentiment(request.form['profile'], ratings, comments)
 	word_string = ' '.join([comment['commentText'] for comment in comments])
 	wcloud = wordcloud(request.form['profile'], word_string)
-	return jsonify({'src': wcloud, 'rating_sentiments': rating_sentiments})
+	return jsonify({'src': wcloud})
 
 # TODO
 def get_sentiment_score(comment):
@@ -405,6 +405,22 @@ def get_ranking():
 	
 	return jsonify({'ranked_list': ranked_list})
 
+@app.route('/getcsv', methods=['GET'])
+def get_csv():
+	comments = get_comments_from_mongo()
+	ratings = get_ratings_from_mongo()
+
+	ranking_dict = {}
+	for s in students:
+		ranking_dict[s] = compute_rating_sentiment(s, ratings, comments)
+	
+	ranked_namelist = sorted(ranking_dict.keys(), key=lambda x: (ranking_dict[x]['average_rating'], ranking_dict[x]['average_sentiment']), reverse=True)
+	ranked_list = [{'name': student, 'ratings': ranking_dict[student]} for student in ranked_namelist]
+	
+	export_csv(ranked_list)
+
+	return jsonify({'ranked_list': ranked_list})
+
 def get_comments_from_mongo(query_filter={}):
 	comments_collection = mongodb['comments']
 	comments = []
@@ -447,10 +463,6 @@ def compute_rating_sentiment(student, ratings, comments=[]):
 					cur_rating[category]['numQuestions'] += 1
 					cur_rating['total']['runningTotal'] += question[1]
 					cur_rating['total']['numQuestions'] += 1
-	
-	# check1 = True if cur_rating['total']['runningTotal'] == cur_rating['workEthic']['runningTotal'] + cur_rating['teamEffectiveness']['runningTotal'] + cur_rating['thinkingSkills']['runningTotal'] + cur_rating['competence']['runningTotal'] + cur_rating['presence']['runningTotal'] else False
-	# check2 = True if cur_rating['total']['numQuestions'] == cur_rating['workEthic']['numQuestions'] + cur_rating['teamEffectiveness']['numQuestions'] + cur_rating['thinkingSkills']['numQuestions'] + cur_rating['competence']['numQuestions'] + cur_rating['presence']['numQuestions'] else False
-	# print('>>>>', check1, check2)
 
 	average_sentiment = sum(all_sentiments) / len(all_sentiments) if all_sentiments else 0
 	average_rating = cur_rating['total']['runningTotal'] / cur_rating['total']['numQuestions'] if cur_rating['total']['numQuestions'] > 0 else 0
@@ -462,10 +474,18 @@ def compute_rating_sentiment(student, ratings, comments=[]):
 	presence = round(cur_rating['presence']['runningTotal'] / cur_rating['presence']['numQuestions']) if cur_rating['presence']['numQuestions'] > 0 else 0
 
 	cur_grade = GRADES.get(round(average_rating), 'D')
+	workEthicGrade = GRADES.get(workEthic, 'D')
+	teamEffectivenessGrade = GRADES.get(teamEffectiveness, 'D')
+	thinkingSkillsGrade = GRADES.get(thinkingSkills, 'D')
+	competenceGrade = GRADES.get(competence, 'D')
+	presenceGrade = GRADES.get(presence, 'D')
+
 	return {'average_rating': average_rating, 'average_sentiment': average_sentiment, 'grade': cur_grade,
 			'workEthic': workEthic, 'teamEffectiveness': teamEffectiveness, 'thinkingSkills': thinkingSkills,
-			'competence': competence, 'presence': presence}
+			'competence': competence, 'presence': presence, 'workEthicGrade': workEthicGrade,
+			'teamEffectivenessGrade': teamEffectivenessGrade, 'thinkingSkillsGrade': thinkingSkillsGrade,
+			'competenceGrade': competenceGrade, 'presenceGrade': presenceGrade}
 
 
-if __name__ == '__main__':
-	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+# if __name__ == '__main__':
+# 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))

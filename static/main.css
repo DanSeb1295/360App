@@ -8391,12 +8391,12 @@ button.close {
 /*
 /* Click + hover color */
 input:checked ~ label, /* color current and previous stars on checked */
-label:hover, label:hover ~ label { /*color: #73B100;*/  } /* color previous stars on hover */
+label:hover, label:hover ~ label { color: #F8B500;  } /* color previous stars on hover */
 
 /* Hover highlights */
 input:checked + label:hover, input:checked ~ label:hover, /* highlight current and previous stars */
 input:checked ~ label:hover ~ label, /* highlight previous selected stars for new rating */
-label:hover ~ input:checked ~ label /* highlight previous selected stars */ { /*color: #F8B500;*/  } 
+label:hover ~ input:checked ~ label /* highlight previous selected stars */ { color: #F8B500;  } 
 
 /* Ranking Page Stars */
 .score > label {
