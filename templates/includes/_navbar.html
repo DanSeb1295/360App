@@ -1,6 +1,6 @@
 <nav class="navbar navbar-default" style="width: auto">
   <div style="float:right; width: 7rem; padding-right: 50px">
-    <a href="{{ '/profile/' + current_user.name.lower().replace(' ', '') if not current_user.admin else '/'}}"><img src="{{current_user.avatar}}" alt={{current_user.name + "'s Photo"}} style="border-radius: 50%; width:5rem; padding:1rem;"></a>
+    <a href="{{ '/profile/' + current_user.name.lower().replace(' ', '') if current_user.name in students else '/'}}"><img src="{{current_user.avatar}}" alt={{current_user.name + "'s Photo"}} style="border-radius: 50%; width:5rem; padding:1rem;"></a>
   </div>
   <div class="container" style="height: 100%; vertical-align: middle;">
     <div class="navbar-header" style="height: 100%; vertical-align: middle;">

@@ -17,40 +17,84 @@
 				</div>
 			</div>
 			<div style="display: -webkit-flex; -webkit-flex-flow: column wrap; display: flex; flex-flow: column wrap; width: 30%; height: auto; margin: 40px; margin-left: 50px; border-right: 2px solid #888">
-				<div style="display: -webkit-flex; -webkit-flex-flow: row; display: flex; flex-flow: row; width: auto; margin: 3px">
-					<img src="/static/images/work_ethic.png" style="height: 25px; width: 25px; margin: 2px; margin-right: 5px">
-					{% for n in range(5) %}
-						<img src="/static/images/filled_star.png" style="height: 20px; width: 20px; margin: 2px">
-					{% endfor %}	
+				<div id='work-ethic-score' style="padding: 3px; padding-left: 20px">
+					<img src="/static/images/work_ethic.png" style="height: 15%; width: 15%; padding: 5px;">	
+					<span class="score" style="margin-left: 15px;">
+						<label id="rating10-workEthic" title="5 stars"></label>
+						<label class="half" id="rating9-workEthic" title="4.5 stars"></label>
+						<label id="rating8-workEthic" title="4 stars"></label>
+						<label class="half" id="rating7-workEthic" title="3.5 stars"></label>
+						<label id="rating6-workEthic" title="3 stars"></label>
+						<label class="half" id="rating5-workEthic" title="2.5 stars"></label>
+						<label id="rating4-workEthic" title="2 stars"></label>
+						<label class="half" id="rating3-workEthic" title="1.5 stars"></label>
+						<label id="rating2-workEthic" title="1 stars"></label>
+						<label class="half" id="rating1-workEthic" title="0.5 stars"></label>
+					</span>
 				</div>
-				<div style="display: -webkit-flex; -webkit-flex-flow: row; display: flex; flex-flow: row; width: auto; margin: 3px">
-					<img src="/static/images/team_effectiveness.png" style="height: 25px; width: 25px; margin: 2px; margin-right: 5px">
-					{% for n in range(3) %}
-						<img src="/static/images/filled_star.png" style="height: 20px; width: 20px; margin: 2px">
-					{% endfor %}	
+				<div id='team-effectiveness-score' style="padding: 3px; padding-left: 20px">
+					<img src="/static/images/team_effectiveness.png" style="height: 15%; width: 15%; padding: 5px;">
+					<span class="score" style="margin-left: 15px;">
+						<label id="rating10-teamEffectiveness" title="5 stars"></label>
+						<label class="half" id="rating9-teamEffectiveness" title="4.5 stars"></label>
+						<label id="rating8-teamEffectiveness" title="4 stars"></label>
+						<label class="half" id="rating7-teamEffectiveness" title="3.5 stars"></label>
+						<label id="rating6-teamEffectiveness" title="3 stars"></label>
+						<label class="half" id="rating5-teamEffectiveness" title="2.5 stars"></label>
+						<label id="rating4-teamEffectiveness" title="2 stars"></label>
+						<label class="half" id="rating3-teamEffectiveness" title="1.5 stars"></label>
+						<label id="rating2-teamEffectiveness" title="1 stars"></label>
+						<label class="half" id="rating1-teamEffectiveness" title="0.5 stars"></label>
+					</span>
 				</div>
-				<div style="display: -webkit-flex; -webkit-flex-flow: row; display: flex; flex-flow: row; width: auto; margin: 3px">
-					<img src="/static/images/thinking_skills.png" style="height: 25px; width: 25px; margin: 2px; margin-right: 5px">
-					{% for n in range(5) %}
-						<img src="/static/images/filled_star.png" style="height: 20px; width: 20px; margin: 2px">
-					{% endfor %}
+				<div id="thinking-skills-score" style="padding: 3px; padding-left: 20px">
+					<img src="/static/images/thinking_skills.png" style="height: 15%; width: 15%; padding: 5px;">
+					<span class="score" style="margin-left: 15px;">
+						<label id="rating10-thinkingSkills" title="5 stars"></label>
+						<label class="half" id="rating9-thinkingSkills" title="4.5 stars"></label>
+						<label id="rating8-thinkingSkills" title="4 stars"></label>
+						<label class="half" id="rating7-thinkingSkills" title="3.5 stars"></label>
+						<label id="rating6-thinkingSkills" title="3 stars"></label>
+						<label class="half" id="rating5-thinkingSkills" title="2.5 stars"></label>
+						<label id="rating4-thinkingSkills" title="2 stars"></label>
+						<label class="half" id="rating3-thinkingSkills" title="1.5 stars"></label>
+						<label id="rating2-thinkingSkills" title="1 stars"></label>
+						<label class="half" id="rating1-thinkingSkills" title="0.5 stars"></label>
+					</span>
 				</div>
-				<div style="display: -webkit-flex; -webkit-flex-flow: row; display: flex; flex-flow: row; width: auto; margin: 3px">
-					<img src="/static/images/competence.png" style="height: 25px; width: 25px; margin: 2px; margin-right: 5px">
-					{% for n in range(4) %}
-						<img src="/static/images/filled_star.png" style="height: 20px; width: 20px; margin: 2px">
-					{% endfor %}
+				<div id="competence" style="padding: 3px; padding-left: 20px">
+					<img src="/static/images/competence.png" style="height: 15%; width: 15%; padding: 5px;">
+					<span class="score" style="margin-left: 15px;">
+						<label id="rating10-competence" title="5 stars"></label>
+						<label class="half" id="rating9-competence" title="4.5 stars"></label>
+						<label id="rating8-competence" title="4 stars"></label>
+						<label class="half" id="rating7-competence" title="3.5 stars"></label>
+						<label id="rating6-competence" title="3 stars"></label>
+						<label class="half" id="rating5-competence" title="2.5 stars"></label>
+						<label id="rating4-competence" title="2 stars"></label>
+						<label class="half" id="rating3-competence" title="1.5 stars"></label>
+						<label id="rating2-competence" title="1 stars"></label>
+						<label class="half" id="rating1-competence" title="0.5 stars"></label>
+					</span>
 				</div>
-				<div style="display: -webkit-flex; -webkit-flex-flow: row; display: flex; flex-flow: row; width: auto; margin: 3px">
-					<img src="/static/images/presence.png" style="height: 25px; width: 25px; margin: 2px; margin-right: 5px">
-					{% for n in range(5) %}
-						<img src="/static/images/filled_star.png" style="height: 20px; width: 20px; margin: 2px">
-					{% endfor %}
+				<div id="presence" style="padding: 3px; padding-left: 20px">
+					<img src="/static/images/presence.png" style="height: 15%; width: 15%; padding: 5px;">
+					<span class="score" style="margin-left: 15px;">
+						<label id="rating10-presence" title="5 stars"></label>
+						<label class="half" id="rating9-presence" title="4.5 stars"></label>
+						<label id="rating8-presence" title="4 stars"></label>
+						<label class="half" id="rating7-presence" title="3.5 stars"></label>
+						<label id="rating6-presence" title="3 stars"></label>
+						<label class="half" id="rating5-presence" title="2.5 stars"></label>
+						<label id="rating4-presence" title="2 stars"></label>
+						<label class="half" id="rating3-presence" title="1.5 stars"></label>
+						<label id="rating2-presence" title="1 stars"></label>
+						<label class="half" id="rating1-presence" title="0.5 stars"></label>
+					</span>
 				</div>
-
 			</div>
 			<div style="width: 20%; margin: 10px">
-				<p style="font-family: 'helvetica neue'; font-size: 100px; color: #888; text-align: center; margin-left: -15%; line-height: 130px">A+</p>
+				<p id="student-grade" style="font-family: 'helvetica neue'; font-size: 100px; color: #888; text-align: center; margin-left: -15%; line-height: 130px"></p>
 			</div>
 		</div>
 		<div style="margin: 20px; margin-bottom: 10px; font-size: 25px; font-family: 'Helvetica Light'; letter-spacing: 2px; color: #777">
@@ -99,13 +143,34 @@
 	</style>
 	<script type="text/javascript">
 		$(function() {
-			$.post('/getwordcloud', {
+			$.post('/getratings', {
                 profile: '{{ profile }}'
             }).done(function(response) {
-            	var wcloud = '<img src="' + response['src'] + '" style="height: 20%; width: 100%; margin: 20px;">'
-                $("#wordcloud").html(wcloud)
+            	let ratings = response['ratings']
+            	let query = '#student-grade'
+				$(query).html(ratings['grade'])
+				for (let j = 0; j <= ratings['workEthic']; j++) {
+					let query = '.score > label#rating' + String(j) + '-workEthic'
+					$(query).css({'color': '#F8B500'});
+				};
+				for (let j = 0; j <= ratings['teamEffectiveness']; j++) {
+					let query = '.score > label#rating' + String(j) + '-teamEffectiveness'
+					$(query).css({'color': '#F8B500'});
+				};
+				for (let j = 0; j <= ratings['thinkingSkills']; j++) {
+					let query = '.score > label#rating' + String(j) + '-thinkingSkills'
+					$(query).css({'color': '#F8B500'});
+				};
+				for (let j = 0; j <= ratings['competence']; j++) {
+					let query = '.score > label#rating' + String(j) + '-competence'
+					$(query).css({'color': '#F8B500'});
+				};
+				for (let j = 0; j <= ratings['presence']; j++) {
+					let query = '.score > label#rating' + String(j) + '-presence'
+					$(query).css({'color': '#F8B500'});
+				};
             }).fail(function() {
-                $("#wordcloud").text("Error: Failed to generate wordcloud");
+                $().text("Error: Failed to generate retrieve ratings from database");
             });
 
             $.post('/getcomments', {
@@ -114,11 +179,30 @@
             	var feedback = response['feedback']
             	$('#feedback-feed').html('')
             	for (let i = 0; i < feedback.length; i++) {
-            		let template = '<div class="zoom">' + '<h4>Project ' + feedback[i]['projectNum'] + '</h4>' + '<cite style="font-family: Helvetica-Light; font-size: 15px; color: #555">' + '&quot;' + feedback[i]['commentText'] + '&quot;' + '</div>'
+            		let template = '<div class="zoom" style="overflow-y: auto; width: 200px">' + '<h4>'
+            		if (feedback[i]['projectNum'] == 0) {
+            			template += 'Rapid Feedback'
+            		} else {
+            			template += 'Project ' + feedback[i]['projectNum']
+            		}
+            		template += '</h4>' + '<cite style="font-family: Helvetica-Light; font-size: 15px; color: #555;">' + '&quot;' + feedback[i]['commentText'] + '&quot;' 
+            		if ({{ current_user.admin }}) {
+            			template += '<b> - ' + feedback[i]['givenBy'] + '</b>'
+            		}
+            		template += '</cite></div>'
             		$('#feedback-feed').append(template)
             	}
             }).fail(function() {
             	$('#feedback-feed').text('Error: Failed to retrieve feedback from database')
+            });
+
+            $.post('/getwordcloud', {
+                profile: '{{ profile }}'
+            }).done(function(response) {
+            	var wcloud = '<img src="' + response['src'] + '" style="height: 20%; width: 100%; margin: 20px;">'
+                $("#wordcloud").html(wcloud)
+            }).fail(function() {
+                $("#wordcloud").text("Error: Failed to generate wordcloud");
             });
 		});
 	</script>

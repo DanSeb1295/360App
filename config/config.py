@@ -10,6 +10,20 @@ MONGO_URI = 'mongodb+srv://{}:{}@cluster0-7qgtl.mongodb.net/test?retryWrites=tru
 
 basedir = os.path.abspath(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
 
+GRADES = {
+    10: 'A+',
+    9: 'A',
+    8: 'A-',
+    7: 'B+',
+    6: 'B',
+    5: 'B-',
+    4: 'C+',
+    3: 'C',
+    2: 'C-',
+    1: 'D+',
+    0: 'D'
+}
+
 class Auth:
     """Google Project Credentials"""
     CLIENT_ID = ('1022937286771-t7aritjh57ffsh41gkam13cn86h24jpi.apps.googleusercontent.com')

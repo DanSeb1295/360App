@@ -9,36 +9,99 @@
 		<div id="leaderboard" style="display: -webkit-flex; -webkit-flex-flow: row wrap; display: flex; flex-flow: row wrap; height: 100%; width: 100%; justify-content: space-evenly; margin-bottom: 100px">
 			<img id="loading-gif" src='{{ url_for("static", filename="images/loading.gif") }}' style='margin-top: 5%; position: absolute;'>
 			{% for student in students %}
-			<div class="flip-card" id="flip-card-{{loop.index}}" style="display: none">
-			<a id="profile-url-{{loop.index}}" href="/profile/{{student.replace(' ', '')}}" style="text-decoration: none">
-				<div id="flip-card-inner-{{loop.index}}" class="flip-card-inner" style="border-radius: 10px; height: 250px; width: 200px; margin: 4px; background-color: #FFF4E0; margin: 20px; box-shadow: -0px 0px 50px rgba(200, 200, 200, 1); position: relative">
-						<div class="flip-card-front" id="flip-card-front-{{loop.index}}">
-							<div class="student-name" style="display: -webkit-flex; -webkit-flex-flow: row wrap; display: flex; flex-flow: row wrap; background-color: #393E46; height: 30%; top: 0px; border-top-right-radius: 6px; border-top-left-radius: 6px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; border: 1px #FFF; justify-content: center; align-items: center;">
+			<div class="flip-card" id="flip-card-{{loop.index}}" style="visibility: hidden;">
+			<a id="profile-url-{{loop.index}}" href="" style="text-decoration: none">
+				<div id="flip-card-inner-{{loop.index}}" class="flip-card-inner" style="border-radius: 10px; height: 300px; width: 200px; margin: 4px; margin: 20px; box-shadow: -0px 0px 50px rgba(200, 200, 200, 1); position: relative; ">
+						<div class="flip-card-front" id="flip-card-front-{{loop.index}}" style="border-radius: 6px; background-color: #f5f5f5; height: auto">
+							<div class="student-name" style="display: -webkit-flex; -webkit-flex-flow: row wrap; display: flex; flex-flow: row wrap; background-color: #393E46; height: 25%; top: 0px; border-top-right-radius: 6px; border-top-left-radius: 6px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; border: 1px #FFF; justify-content: center; align-items: center;">
 								<h3 id="student-name-{{loop.index}}" style="font-family: helvetica; font-size: 100%; line-height: 100%; color: #00ADB5; margin-bottom: 40px; text-align: center;"></h3>
 							</div>
-							<!-- {% set ns = namespace(ranking_pic=false) %}
-							{% for user in users_db if student == user['name'] %}
-					              <img id="flip-card-avatar-{{loop.index}}" src={{ user['avatar'] }} style="height: 60px; width: 60px; position: absolute; top: 18%; margin-right: 35%;margin-left: 35%; border-radius: 50%">
-					              {% set ns.ranking_pic = true %}
-					        {% endfor %}
-					        {% if not ns.ranking_pic %}
-					                
-					        {% endif %} -->
-					        <img id="flip-card-avatar-{{loop.index}}" src="/static/images/placeholder.png" style="height: 60px; width: 60px; position: absolute; top: 18%; margin-right: 35%;margin-left: 35%; border-radius: 50%">
-							<div style="background-color: #F8B500; border-radius: 50%; height: 40px; width: 40px; border: 2px solid #FFF4E0; position: absolute; top: -15px; left: -20px; box-shadow: -0px 0px 20px rgba(100, 100, 100, 0.5);">
+					        <img id="flip-card-avatar-{{loop.index}}" src="/static/images/placeholder.png" style="height: 60px; width: 60px; position: absolute; top: 14%; margin-right: 35%;margin-left: 35%; border-radius: 50px">
+							<div style="background: linear-gradient(to right bottom, #648880 30%, #293f50); background: -webkit-linear-gradient(to right bottom, #648880, #293f50); background: -moz-linear-gradient(to right bottom, #648880 20%, #293f50); border-radius: 50%; height: 40px; width: 40px; border: 1.5px solid #FFF4E0; position: absolute; top: -15px; left: -20px; box-shadow: -0px 0px 10px rgba(100, 100, 100, 0.5);">
 								<p style="font-family: helvetica neue; color: #FFF4E0; text-align: center; height: 100%; line-height: 100%; margin: 0; font-size: 20px; padding-top: 8px; vertical-align: middle; ">
 									<i>{{loop.index}}</i>
 								</p>
 							</div>
-							<div>
-								<img src={{ dataplots }} style="height: 100%; width: 100%; padding-top:25px">
+							<div style="display: -webkit-flex; -webkit-flex-flow: column; display: flex; flex-flow: column; justify-content: space-around; padding-top: 30px; padding-bottom: 10px">
+								<div id='work-ethic-score' style="padding: 3px; padding-left: 20px">
+									<img src="/static/images/work_ethic.png" style="height: 15%; width: 15%; padding: 2px;">	
+									<span class="score" style="margin-left: 15px;">
+										<label id="rating10-workEthic-{{ loop.index }}" title="5 stars"></label>
+										<label class="half" id="rating9-workEthic-{{ loop.index }}" title="4.5 stars"></label>
+										<label id="rating8-workEthic-{{ loop.index }}" title="4 stars"></label>
+										<label class="half" id="rating7-workEthic-{{ loop.index }}" title="3.5 stars"></label>
+										<label id="rating6-workEthic-{{ loop.index }}" title="3 stars"></label>
+										<label class="half" id="rating5-workEthic-{{ loop.index }}" title="2.5 stars"></label>
+										<label id="rating4-workEthic-{{ loop.index }}" title="2 stars"></label>
+										<label class="half" id="rating3-workEthic-{{ loop.index }}" title="1.5 stars"></label>
+										<label id="rating2-workEthic-{{ loop.index }}" title="1 stars"></label>
+										<label class="half" id="rating1-workEthic-{{ loop.index }}" title="0.5 stars"></label>
+									</span>
+								</div>
+								<div id='team-effectiveness-score' style="padding: 3px; padding-left: 20px">
+									<img src="/static/images/team_effectiveness.png" style="height: 15%; width: 15%; padding: 2px;">
+									<span class="score" style="margin-left: 15px;">
+										<label id="rating10-teamEffectiveness-{{ loop.index }}" title="5 stars"></label>
+										<label class="half" id="rating9-teamEffectiveness-{{ loop.index }}" title="4.5 stars"></label>
+										<label id="rating8-teamEffectiveness-{{ loop.index }}" title="4 stars"></label>
+										<label class="half" id="rating7-teamEffectiveness-{{ loop.index }}" title="3.5 stars"></label>
+										<label id="rating6-teamEffectiveness-{{ loop.index }}" title="3 stars"></label>
+										<label class="half" id="rating5-teamEffectiveness-{{ loop.index }}" title="2.5 stars"></label>
+										<label id="rating4-teamEffectiveness-{{ loop.index }}" title="2 stars"></label>
+										<label class="half" id="rating3-teamEffectiveness-{{ loop.index }}" title="1.5 stars"></label>
+										<label id="rating2-teamEffectiveness-{{ loop.index }}" title="1 stars"></label>
+										<label class="half" id="rating1-teamEffectiveness-{{ loop.index }}" title="0.5 stars"></label>
+									</span>
+								</div>
+								<div id="thinking-skills-score" style="padding: 3px; padding-left: 20px">
+									<img src="/static/images/thinking_skills.png" style="height: 15%; width: 15%; padding: 2px;">
+									<span class="score" style="margin-left: 15px;">
+										<label id="rating10-thinkingSkills-{{ loop.index }}" title="5 stars"></label>
+										<label class="half" id="rating9-thinkingSkills-{{ loop.index }}" title="4.5 stars"></label>
+										<label id="rating8-thinkingSkills-{{ loop.index }}" title="4 stars"></label>
+										<label class="half" id="rating7-thinkingSkills-{{ loop.index }}" title="3.5 stars"></label>
+										<label id="rating6-thinkingSkills-{{ loop.index }}" title="3 stars"></label>
+										<label class="half" id="rating5-thinkingSkills-{{ loop.index }}" title="2.5 stars"></label>
+										<label id="rating4-thinkingSkills-{{ loop.index }}" title="2 stars"></label>
+										<label class="half" id="rating3-thinkingSkills-{{ loop.index }}" title="1.5 stars"></label>
+										<label id="rating2-thinkingSkills-{{ loop.index }}" title="1 stars"></label>
+										<label class="half" id="rating1-thinkingSkills-{{ loop.index }}" title="0.5 stars"></label>
+									</span>
+								</div>
+								<div id="competence" style="padding: 3px; padding-left: 20px">
+									<img src="/static/images/competence.png" style="height: 15%; width: 15%; padding: 2px;">
+									<span class="score" style="margin-left: 15px;">
+										<label id="rating10-competence-{{ loop.index }}" title="5 stars"></label>
+										<label class="half" id="rating9-competence-{{ loop.index }}" title="4.5 stars"></label>
+										<label id="rating8-competence-{{ loop.index }}" title="4 stars"></label>
+										<label class="half" id="rating7-competence-{{ loop.index }}" title="3.5 stars"></label>
+										<label id="rating6-competence-{{ loop.index }}" title="3 stars"></label>
+										<label class="half" id="rating5-competence-{{ loop.index }}" title="2.5 stars"></label>
+										<label id="rating4-competence-{{ loop.index }}" title="2 stars"></label>
+										<label class="half" id="rating3-competence-{{ loop.index }}" title="1.5 stars"></label>
+										<label id="rating2-competence-{{ loop.index }}" title="1 stars"></label>
+										<label class="half" id="rating1-competence-{{ loop.index }}" title="0.5 stars"></label>
+									</span>
+								</div>
+								<div id="presence" style="padding: 3px; padding-left: 20px">
+									<img src="/static/images/presence.png" style="height: 15%; width: 15%; padding: 2px;">
+									<span class="score" style="margin-left: 15px;">
+										<label id="rating10-presence-{{ loop.index }}" title="5 stars"></label>
+										<label class="half" id="rating9-presence-{{ loop.index }}" title="4.5 stars"></label>
+										<label id="rating8-presence-{{ loop.index }}" title="4 stars"></label>
+										<label class="half" id="rating7-presence-{{ loop.index }}" title="3.5 stars"></label>
+										<label id="rating6-presence-{{ loop.index }}" title="3 stars"></label>
+										<label class="half" id="rating5-presence-{{ loop.index }}" title="2.5 stars"></label>
+										<label id="rating4-presence-{{ loop.index }}" title="2 stars"></label>
+										<label class="half" id="rating3-presence-{{ loop.index }}" title="1.5 stars"></label>
+										<label id="rating2-presence-{{ loop.index }}" title="1 stars"></label>
+										<label class="half" id="rating1-presence-{{ loop.index }}" title="0.5 stars"></label>
+									</span>
+								</div>
 							</div>
 						</div>
-						<div class="flip-card-back" id="flip-card-back-{{loop.index}}">
-							<div style="padding: 15px; text-align: center; line-height: 100%; vertical-align: middle;">
-								<cite style="font-family: helvetica">
-								&quot;Nancy, I noticed at the meeting this morning that you got defensive when your data was challenged during your presentation. When Amy asked a question about your calculations, you were short with her and told her she needs to trust that you know how to do your job. When you responded to her that way, she shut down for the rest of the meeting and seemed angry. You really need her support, and I’m wondering if you’ll have it now. What are your thoughts?&quot;
-								</cite>	
+						<div class="flip-card-back" id="flip-card-back-{{loop.index}}" style="background-color: #f5f5f5">
+							<div id="student-grade-{{ loop.index }}" style="padding: 15px; text-align: center; line-height: 100%; vertical-align: middle; padding-top: 90px; padding-left: 30px; font-family: 'Helvetica Neue'; font-size: 100px; font-style: italic; color: #F8B500;">
 							</div>
 					    </div>
 				</div>
@@ -51,21 +114,53 @@
 	$(function() {
 		$.get('/getranking').done(function(response) {
 			$("#loading-gif").remove()
+			$(".flip-card").css("visibility", "")
 			for (let i = 0; i < response['ranked_list'].length; i++) { 
-				$(".flip-card").css("display", "")
-				let student = response['ranked_list'][i]
-				$("#student-name-" + (i+1)).text(student)
+				let counter = i + 1
+				let student = response['ranked_list'][i]['name']
+				let ratings = response['ranked_list'][i]['ratings']
+				$("#student-name-" + (counter)).text(student)
 				let db = {{users_db | tojson}}
 				let newArray = db.filter(function (el) {
 				  return el.name == student
 				});
+				let query = '#student-grade-' + String(counter)
+				$(query).html(ratings['grade'])
+
+				let query2 = '#profile-url-' + String(counter)
+
+				let url = '/profile/' + student.replace(/ /g, '')
+				$(query2).attr('href', url)
+
 				if (newArray.length > 0 && newArray != null) {
-					$("#flip-card-avatar-" + (i+1)).attr("src", newArray[0]['avatar'])
-				}
+					$("#flip-card-avatar-" + (counter)).attr("src", newArray[0]['avatar'])
+				};
+				for (let j = 0; j <= ratings['workEthic']; j++) {
+					let query = '.score > label#rating' + String(j) + '-workEthic-' + String(counter)
+					$(query).css({'color': '#F8B500'});
+				};
+				for (let j = 0; j <= ratings['teamEffectiveness']; j++) {
+					let query = '.score > label#rating' + String(j) + '-teamEffectiveness-' + String(counter)
+					$(query).css({'color': '#F8B500'});
+				};
+				for (let j = 0; j <= ratings['thinkingSkills']; j++) {
+					let query = '.score > label#rating' + String(j) + '-thinkingSkills-' + String(counter)
+					$(query).css({'color': '#F8B500'});
+				};
+				for (let j = 0; j <= ratings['competence']; j++) {
+					let query = '.score > label#rating' + String(j) + '-competence-' + String(counter)
+					$(query).css({'color': '#F8B500'});
+				};
+				for (let j = 0; j <= ratings['presence']; j++) {
+					let query = '.score > label#rating' + String(j) + '-presence-' + String(counter)
+					$(query).css({'color': '#F8B500'});
+				};
 			}
         }).fail(function() {
             $("#leaderboard").text("Error: Failed to generate rankings");
         });
+
+
 	});
 </script>
 {% endblock %}

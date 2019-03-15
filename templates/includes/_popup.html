@@ -45,6 +45,8 @@ $( "button#rr-button" ).click(function() {
             closeForm()
           } else if (response['response'] == 'Invalid Target') {
             alert('Please make sure you have entered a valid name.')
+          } else if (response['response'] == 'Self-Review') {
+            alert("Nice try.")
           }
         }).fail(function() {
             console.log('ERROR')

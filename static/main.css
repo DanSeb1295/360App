@@ -1,4 +1,4 @@
-/*!
+!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
  * Copyright 2011-2016 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
@@ -8335,7 +8335,7 @@ button.close {
 
 /* Style the back side */
 .flip-card-back {
-  background-color: #FFF4E0;
+  background-color: #fefefe;
   border-radius: 10px;
   color: #393E46;
   transform: rotateY(180deg);
@@ -8369,11 +8369,11 @@ button.close {
     font-size: 1.1rem;
     padding: .3rem .2rem;
     margin: 0;
-    cursor: pointer;
     font-family: FontAwesome;
     content: "\f005 "; /* full star */
     font-size: 20px
 }
+
 /* Zero stars rating */
 /* empty star outline */
 /*.rate > label:last-child:before {
@@ -8388,18 +8388,45 @@ button.close {
     padding-right: 0;
     font-size: 20px
 }
+/*
 /* Click + hover color */
 input:checked ~ label, /* color current and previous stars on checked */
-label:hover, label:hover ~ label { color: #73B100;  } /* color previous stars on hover */
+label:hover, label:hover ~ label { /*color: #73B100;*/  } /* color previous stars on hover */
 
 /* Hover highlights */
 input:checked + label:hover, input:checked ~ label:hover, /* highlight current and previous stars */
 input:checked ~ label:hover ~ label, /* highlight previous selected stars for new rating */
-label:hover ~ input:checked ~ label /* highlight previous selected stars */ { color: #F8B500;  } 
+label:hover ~ input:checked ~ label /* highlight previous selected stars */ { /*color: #F8B500;*/  } 
+
+/* Ranking Page Stars */
+.score > label {
+    float: right;
+    padding-top: 3px;
+    display: inline-block;
+    color: #ccc;
+}
+
+.score > label:before{
+    display: inline-block;
+    font-size: 1.1rem;
+    padding: .3rem .2rem;
+    margin: 0;
+    font-family: FontAwesome;
+    content: "\f005 "; /* full star */
+    font-size: 20px;
+}
+
+/* Half star trick */
+.score .half:before {
+    content: "\f089 "; /* half star no outline */
+    position: absolute;
+    padding-right: 0;
+    font-size: 20px;
+}
 
 @font-face {
     font-family: "Helvetica Light";
     src: url(/static/fonts/Helvetica-Light.woff) format("woff");
 }
 
-/*# sourceMappingURL=bootstrap.min.css.map */
+/*# sourceMappingURL=bootstrap.min.css.map 
