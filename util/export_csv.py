@@ -2,6 +2,7 @@ import os
 from config.config import basedir
 
 csv_path = os.path.join(basedir, 'csv/IEOR171_Team_Grades.csv')
+print('>>>>>>>>>', csv_path)
 
 def export_csv(ranked_list):
 	csv_file = open(csv_path, 'w+')
