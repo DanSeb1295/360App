@@ -487,5 +487,5 @@ def compute_rating_sentiment(student, ratings, comments=[]):
 			'competenceGrade': competenceGrade, 'presenceGrade': presenceGrade}
 
 
-# if __name__ == '__main__':
-# 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+if __name__ == '__main__':
+	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
