@@ -396,19 +396,39 @@ def get_ratings():
 		rating.pop('_id', None)
 
 	result = compute_rating_sentiment(profile, ratings)
+	chart_data = compute_chart_data(profile, ratings)
 
 	line_chart = pygal.Bar(stroke=False, style=pygal_style)
 	line_chart.title = 'Character Ratings Across Projects'
 	line_chart.x_labels = 'Project 1', 'Project 2', 'Project 3', 'Project 4'
-	line_chart.add('Work Ethic', [2, 5, 8, 7])
-	line_chart.add('Team Effectiveness',  [3.9, 9.8, 6.8, 5.3])
-	line_chart.add('Thinking Skills',      [8.8, 8.6, 8.7, 7.5])
-	line_chart.add('Competence',  [9.4,  8.9,  6.8,  7.5])
-	line_chart.add('Presence',  [8.2, 3.4, 4.3,  8.9])
+	line_chart.y_labels = range(11)
+	line_chart.add('Work Ethic', [chart_data['workEthic'][1], chart_data['workEthic'][2], chart_data['workEthic'][3], chart_data['workEthic'][4]])
+	line_chart.add('Team Effectiveness', [chart_data['teamEffectiveness'][1], chart_data['teamEffectiveness'][2], chart_data['teamEffectiveness'][3], chart_data['teamEffectiveness'][4]])
+	line_chart.add('Thinking Skills', [chart_data['thinkingSkills'][1], chart_data['thinkingSkills'][2], chart_data['thinkingSkills'][3], chart_data['thinkingSkills'][4]])
+	line_chart.add('Competence', [chart_data['competence'][1], chart_data['competence'][2], chart_data['competence'][3], chart_data['competence'][4]])
+	line_chart.add('Presence', [chart_data['presence'][1], chart_data['presence'][2], chart_data['presence'][3], chart_data['presence'][4]])
 	line_chart.render()
 	scatter_plot = line_chart.render_data_uri()
 	
 	return jsonify({'ratings': result, 'scatter_plot': scatter_plot})
+
+def compute_chart_data(profile, ratings):
+	chart_data ={
+		'workEthic': {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0},
+		'teamEffectiveness': {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0},
+		'thinkingSkills': {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0},
+		'competence': {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0},
+		'presence': {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0}
+	}
+
+	num_entries = len(ratings)
+	for rating in ratings:
+		if rating['givenTo'] == profile:
+			for category, responses in rating['ratings'].items():
+				for question, answer in responses.items():
+					chart_data[category][rating['projectNum']] += answer / (3 * num_entries)
+	
+	return chart_data
 
 @app.route('/getcomments', methods=['POST'])
 def get_comments():
@@ -470,7 +490,6 @@ def get_teams_from_mongo(name):
 		project_groupings[project_grouping['projectNum']] = {'team_num': project_grouping['teamNum'], 'members': project_grouping['members']}
 	return project_groupings
 
-
 def compute_rating_sentiment(student, ratings, comments=[]):
 	all_sentiments = [float(comment['sentimentScore']) for comment in comments if comment['givenTo'] == student]
 	all_ratings = [float(rate[1]) for rating in ratings if rating['givenTo'] == student for category in rating['ratings'].keys() for rate in rating['ratings'][category].items()]
@@ -523,5 +542,5 @@ def compute_rating_sentiment(student, ratings, comments=[]):
 			'presenceRaw': presenceRaw}
 
 
-if __name__ == '__main__':
-	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+# if __name__ == '__main__':
+# 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))

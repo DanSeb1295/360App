@@ -41,7 +41,8 @@ pygal_style = Style(
   font_family='Helvetica Neue',
   legend_font_size=15.0,
   title_font_size=17.5,
-  label_font_size=15.0)
+  label_font_size=12.0,
+  major_label_font_size=12.0)
 
 class Auth:
     """Google Project Credentials"""
