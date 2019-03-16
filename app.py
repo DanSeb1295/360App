@@ -7,6 +7,7 @@ import time
 import math
 import json
 import pygal
+from threading import Thread
 from flask import Flask, flash, url_for, redirect, render_template, session, request, jsonify
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
@@ -14,38 +15,50 @@ from flask_login import LoginManager, login_required, login_user, logout_user, c
 from pymongo import MongoClient
 from requests_oauthlib import OAuth2Session
 from requests.exceptions import HTTPError
-from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_accounts, students, information, DUE_DAY, MAIL_USERNAME, MAIL_PASSWORD, MONGO_URI, GRADES, IBM_API, IBM_URL, WEEK, pygal_style
+from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_accounts, students, information, DUE_DAY, MAIL_USERNAME, MAIL_PASSWORD, MONGO_URI, GRADES, IBM_API, IBM_URL, WEEK, pygal_style, student_email_dict
 from models.schemas import project_groupings_schema, comments_schema, ratings_schema, articles_schema
 from util.export_sheets import export_to_sheet
 from util.data import visualise, wordcloud
 from watson_developer_cloud import NaturalLanguageUnderstandingV1
 from watson_developer_cloud.natural_language_understanding_v1 import Features, SentimentOptions
 
-
+""" Config Setup"""
 config = {
 	"dev": DevConfig,
 	"prod": ProdConfig,
 	"default": DevConfig
 }
 
-"""APP creation and configuration"""
-app = Flask(__name__)
-app.config.from_object(config['dev'])
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', config['dev'].SQLALCHEMY_DATABASE_URI)
-app.secret_key = app.config['SECRET_KEY']
-app.jinja_env.add_extension('jinja2.ext.loopcontrols')
-db = SQLAlchemy(app)
-mongoClient = MongoClient(app.config['MONGO_URI'])
-login_manager = LoginManager(app)
-login_manager.login_view = "login"
-login_manager.session_protection = "strong"
-mongodb = mongoClient['360DB']
-cur_user_team_list = []
+mail_settings = {
+		"MAIL_SERVER": 'smtp.gmail.com',
+		"MAIL_PORT": 465,
+		"MAIL_USE_TLS": False,
+		"MAIL_USE_SSL": True,
+		"MAIL_USERNAME": os.environ.get('MAIL_USERNAME', MAIL_USERNAME),
+		"MAIL_PASSWORD": os.environ.get('MAIL_PASSWORD', MAIL_PASSWORD)
+	}
+
 natural_language_understanding = NaturalLanguageUnderstandingV1(
     version='2018-11-16',
     iam_apikey=IBM_API,
     url=IBM_URL
 )
+
+""" APP creation and Configuration """
+app = Flask(__name__)
+app.config.from_object(config['dev'])
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', config['dev'].SQLALCHEMY_DATABASE_URI)
+app.secret_key = app.config['SECRET_KEY']
+app.jinja_env.add_extension('jinja2.ext.loopcontrols')
+app.config.update(mail_settings)
+db = SQLAlchemy(app)
+login_manager = LoginManager(app)
+login_manager.login_view = "login"
+login_manager.session_protection = "strong"
+mail = Mail(app)
+mongoClient = MongoClient(app.config['MONGO_URI'])
+mongodb = mongoClient['360DB']
+cur_user_team_list = []
 
 """ DB Models """
 class User(db.Model, UserMixin):
@@ -205,24 +218,31 @@ def logout():
 	logout_user()
 	return redirect(url_for('home'))
 
+def mail_notif(receiver, feedback):
+	email = student_email_dict[receiver]
+
+	message = {"subject": "<IEOR171 NOTIFICATION> 360 FEEDBACK RECEIVED",
+				"sender": mail_settings["MAIL_USERNAME"],
+				"bcc": ["dyee003@berkeley.edu"],
+				}
+
+	msg = Message(**message)
+	msg.html = render_template('email/email_notification.html', receiver=receiver, feedback=feedback)
+
+	Thread(target=send_async_email, args=(app, msg)).start()
+
+def send_async_email(app, msg):
+	print('>>>>>> MAIL SENT IN BACKGROUND')
+	with app.app_context():
+		mail.send(msg)
+
 def automail():
 	if datetime.datetime.today().weekday() != (DUE_DAY - 1) % 7:
 		return None
 
-	mail_settings = {
-		"MAIL_SERVER": 'smtp.gmail.com',
-		"MAIL_PORT": 465,
-		"MAIL_USE_TLS": False,
-		"MAIL_USE_SSL": True,
-		"MAIL_USERNAME": os.environ.get('MAIL_USERNAME', MAIL_USERNAME),
-		"MAIL_PASSWORD": os.environ.get('MAIL_PASSWORD', MAIL_PASSWORD)
-	}
-
-	app.config.update(mail_settings)
-	mail = Mail(app)
 	message = {"subject": "<IEOR171 REMINDER> 360 TEAMMATE REVIEW",
 				"sender": mail_settings["MAIL_USERNAME"],
-				"bcc": ["dyee003@berkeley.edu", "daniel-sebastian95@hotmail.com"],
+				"bcc": ["dyee003@berkeley.edu"],
 				"body": "Greetings from IEOR171 Tech Firm Leadership.\n\nWe noticed that you have yet to submit your reviews for all your teammates to 360 this week. Please do so before the deadline.\n\nHave a nice day!"
 				}
 
@@ -279,6 +299,7 @@ def submitcomment():
 
 			if new_comment_id:
 				response = 'Success'
+				mail_notif(comment['givenTo'], comment['commentText'])
 			else:
 				response = 'Server/ Database Error'
 		else:
@@ -373,6 +394,7 @@ def submitform():
 
 			if new_rating_id and new_comment_id:
 				response = 'Success'
+				mail_notif(comment['givenTo'], comment['commentText'])
 			else:
 				response = 'Server/ Database Error'
 		else:
