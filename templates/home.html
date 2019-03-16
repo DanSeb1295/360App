@@ -85,8 +85,9 @@
 	        	$('form.main-form')[0].reset();
 	        	$('#questionnaire').hide()	
         	} else if (response['response'] == 'Invalid'){
-        	}
-        	else {
+        	} else if (response['response'] == 'Duplicate Submission') {
+        		alert('Submission not allowed - You have previously submitted your feedback for this person for this project.')
+        	} else {
         		alert(String(response['response']))
         	}
         }).fail(function() {

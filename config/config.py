@@ -1,5 +1,6 @@
 import os
 from os import urandom
+from datetime import datetime
 from pygal.style import Style
 
 
@@ -13,6 +14,17 @@ IBM_API = 'TDpw3n7IRfG1k9Lus73e6HNOb1MfoXzRywivqoBhT-40'
 IBM_URL = 'https://gateway.watsonplatform.net/natural-language-understanding/api'
 
 basedir = os.path.abspath(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
+
+WEEK = {
+    8: datetime(2019, 3, 18),
+    9: datetime(2019, 3, 25),
+    10: datetime(2019, 4, 1),
+    11: datetime(2019, 4, 8),
+    12: datetime(2019, 4, 15),
+    13: datetime(2019, 4, 22),
+    14: datetime(2019, 4, 29),
+    15: datetime(2019, 5, 6)
+}
 
 GRADES = {
     10: 'A+',

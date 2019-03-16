@@ -14,7 +14,7 @@ from flask_login import LoginManager, login_required, login_user, logout_user, c
 from pymongo import MongoClient
 from requests_oauthlib import OAuth2Session
 from requests.exceptions import HTTPError
-from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_accounts, students, information, DUE_DAY, MAIL_USERNAME, MAIL_PASSWORD, MONGO_URI, GRADES, IBM_API, IBM_URL, pygal_style
+from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_accounts, students, information, DUE_DAY, MAIL_USERNAME, MAIL_PASSWORD, MONGO_URI, GRADES, IBM_API, IBM_URL, WEEK, pygal_style
 from models.schemas import project_groupings_schema, comments_schema, ratings_schema, articles_schema
 from util.export_sheets import export_to_sheet
 from util.data import visualise, wordcloud
@@ -168,6 +168,11 @@ def ranking():
 def admin():
 	return render_template('admin.html', teamlist=cur_user_team_list, current_user=current_user, students=students)
 
+@app.route('/submissions')
+@login_required
+def submissions():
+	return render_template('submissions.html', teamlist=cur_user_team_list, current_user=current_user, students=students)
+
 @app.route('/profile/<string:name>')
 @login_required
 def profile(name):
@@ -201,7 +206,7 @@ def logout():
 	return redirect(url_for('home'))
 
 def automail():
-	if datetime.datetime.today().weekday() != DUE_DAY - 1:
+	if datetime.datetime.today().weekday() != (DUE_DAY - 1) % 7:
 		return None
 
 	mail_settings = {
@@ -331,7 +336,14 @@ def submitform():
 		rating_is_valid = validate_rating(rating)
 		comment_is_valid = validate_comment(comment)
 		
-		if rating_is_valid and comment_is_valid:
+		prev_submission = []
+		for entry in mongodb['ratings'].find({'givenTo': comment['givenTo'], 'givenBy': comment['givenBy'], 'projectNum': comment['projectNum']}):
+			prev_submission.append(entry)
+			break
+
+		if prev_submission:
+			response = 'Duplicate Submission'
+		elif rating_is_valid and comment_is_valid:
 			new_rating_id = str(mongodb['ratings'].insert_one(rating).inserted_id)
 			comment['referenceFeedback'] = new_rating_id
 			new_comment_id = str(mongodb['comments'].insert_one(comment).inserted_id)
@@ -398,15 +410,15 @@ def get_ratings():
 	result = compute_rating_sentiment(profile, ratings)
 	chart_data = compute_chart_data(profile, ratings)
 
-	line_chart = pygal.Bar(stroke=False, style=pygal_style)
+	line_chart = pygal.Bar(stroke=False, style=pygal_style, legend_at_bottom=True, legend_at_bottom_columns=5, legend_box_size=18)
 	line_chart.title = 'Character Ratings Across Projects'
 	line_chart.x_labels = 'Project 1', 'Project 2', 'Project 3', 'Project 4'
 	line_chart.y_labels = range(11)
-	line_chart.add('Work Ethic', [chart_data['workEthic'][1], chart_data['workEthic'][2], chart_data['workEthic'][3], chart_data['workEthic'][4]])
-	line_chart.add('Team Effectiveness', [chart_data['teamEffectiveness'][1], chart_data['teamEffectiveness'][2], chart_data['teamEffectiveness'][3], chart_data['teamEffectiveness'][4]])
-	line_chart.add('Thinking Skills', [chart_data['thinkingSkills'][1], chart_data['thinkingSkills'][2], chart_data['thinkingSkills'][3], chart_data['thinkingSkills'][4]])
-	line_chart.add('Competence', [chart_data['competence'][1], chart_data['competence'][2], chart_data['competence'][3], chart_data['competence'][4]])
-	line_chart.add('Presence', [chart_data['presence'][1], chart_data['presence'][2], chart_data['presence'][3], chart_data['presence'][4]])
+	line_chart.add('Work Ethic', [chart_data['workEthic'][1], chart_data['workEthic'][2], chart_data['workEthic'][3], chart_data['workEthic'][4]], rounded_bars=2)
+	line_chart.add('Team Effectiveness', [chart_data['teamEffectiveness'][1], chart_data['teamEffectiveness'][2], chart_data['teamEffectiveness'][3], chart_data['teamEffectiveness'][4]], rounded_bars=2)
+	line_chart.add('Thinking Skills', [chart_data['thinkingSkills'][1], chart_data['thinkingSkills'][2], chart_data['thinkingSkills'][3], chart_data['thinkingSkills'][4]], rounded_bars=2)
+	line_chart.add('Competence', [chart_data['competence'][1], chart_data['competence'][2], chart_data['competence'][3], chart_data['competence'][4]], rounded_bars=2)
+	line_chart.add('Presence', [chart_data['presence'][1], chart_data['presence'][2], chart_data['presence'][3], chart_data['presence'][4]], rounded_bars=2)
 	line_chart.render()
 	scatter_plot = line_chart.render_data_uri()
 	
@@ -421,12 +433,22 @@ def compute_chart_data(profile, ratings):
 		'presence': {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0}
 	}
 
-	num_entries = len(ratings)
+	no_entries = {
+		1: 0,
+		2: 0,
+		3: 0,
+		4: 0
+	}
+
+	for rating in ratings:
+		if rating['givenTo'] == profile:
+			no_entries[rating['projectNum']] += 1
+
 	for rating in ratings:
 		if rating['givenTo'] == profile:
 			for category, responses in rating['ratings'].items():
 				for question, answer in responses.items():
-					chart_data[category][rating['projectNum']] += answer / (3 * num_entries)
+					chart_data[category][rating['projectNum']] += answer / (3 * no_entries[rating['projectNum']])
 	
 	return chart_data
 
@@ -452,6 +474,45 @@ def get_ranking():
 	ranked_list = [{'name': student, 'ratings': ranking_dict[student]} for student in ranked_namelist]
 	
 	return jsonify({'ranked_list': ranked_list})
+
+@app.route('/getsubmissions', methods=['GET'])
+def get_submissions():
+	class_tracker = {}
+	for s in students:
+		groups = get_teams_from_mongo(s)
+		individual_tracker = {
+							1: {'teamSize': max(len(groups.get(1, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
+							2: {'teamSize': max(len(groups.get(2, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
+							3: {'teamSize': max(len(groups.get(3, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
+							4.1: {'teamSize': max(len(groups.get(4, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
+							4.2: {'teamSize': max(len(groups.get(4, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
+							4.3: {'teamSize': max(len(groups.get(4, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
+							4.4: {'teamSize': max(len(groups.get(4, {'members': []})['members']) - 1, 0), 'submittedFor': 0}
+						}
+		class_tracker[s] = individual_tracker
+
+	ratings = get_ratings_from_mongo()
+
+	for rating in ratings:
+		submission_num = rating['projectNum']
+		submitted_at = rating['submittedAt']
+		submitted_for = {
+						submission_num == 1: submission_num,
+						submission_num == 2: submission_num,
+						submission_num == 3: submission_num,
+						submission_num == 4 and WEEK[10] <= submittedAt < WEEK[11]: 4.1,
+						submission_num == 4 and WEEK[11] <= submittedAt < WEEK[12]: 4.2,
+						submission_num == 4 and WEEK[12] <= submittedAt < WEEK[13]: 4.3,
+						submission_num == 4 and WEEK[13] <= submittedAt < WEEK[14]: 4.4,
+						}[True]
+
+		class_tracker[rating['givenBy']][submitted_for]['submittedFor'] += 1
+	
+	class_submissions = []
+	for s in students:
+		class_submissions.append({'name': s, 'submissions': class_tracker[s]})
+
+	return jsonify({'class_submissions': class_submissions})
 
 @app.route('/exportsheet', methods=['GET'])
 def export_sheet():

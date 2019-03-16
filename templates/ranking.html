@@ -6,8 +6,10 @@
 			<h1 style="color: #FFF4E0; font-size: 30px; margin: 0; padding: 0; margin-bottom: 10px">Power Rankings</h1>
 			<cite class="lead" style="color: #00ADB5;">&quot;To be the best leadership course ever taught in UC Berkeley.&quot; - Stephen Torres</cite>
 		</div>
+		<div id="loading-gif" style="width: 100%; text-align: center;">
+			<img src='{{ url_for("static", filename="images/loading.gif") }}' style="margin-top: 100px; height: 150px">
+		</div>
 		<div id="leaderboard" style="display: -webkit-flex; -webkit-flex-flow: row wrap; display: flex; flex-flow: row wrap; height: 100%; width: 100%; justify-content: space-evenly; margin-bottom: 100px">
-			<img id="loading-gif" src='{{ url_for("static", filename="images/loading.gif") }}' style='margin-top: 5%; position: absolute;'>
 			{% for student in students %}
 			<div class="flip-card" id="flip-card-{{loop.index}}" style="visibility: hidden;">
 			<a id="profile-url-{{loop.index}}" href="" style="text-decoration: none">
