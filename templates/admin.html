@@ -77,7 +77,15 @@
 		$('#export-sheets').attr('src', '/static/images/loading.gif')
 		$.get('/exportsheet').done(function(response) {
 			$('#export-sheets').attr('src', '/static/images/export.png')
-			alert('Succesfully exported to google sheets!')
+			alert('Succesfully exported to Google Sheets! Opening in new tab.')
+			var win = window.open('https://docs.google.com/spreadsheets/d/1n1arCN11oWTtj6RgHPgMtR30R8_WbfYEwgmeolESNHU/edit?usp=sharing', '_blank');
+			if (win) {
+			    //Browser has allowed it to be opened
+			    win.focus();
+			} else {
+			    //Browser has blocked it
+			    alert('Please allow popups for this website');
+			}
 		}).fail(function() {
 			alert('Failed to export to sheets')
 		})

@@ -98,13 +98,11 @@ def users_db():
 	users_db = json.dumps([i.serialize for i in User.query.order_by(User.name).all()])
 	return dict(users_db=json.loads(users_db))
 
-@app.route('/')
+@app.route('/feedback')
 @login_required
-def home():
-	if not current_user.is_authenticated:
-		return redirect(url_for('login'))
+def feedback():
 	cur_user_team_list = get_teams_from_mongo(current_user.name)
-	return render_template('home.html', info=information, teamlist=cur_user_team_list, current_user=current_user, students=students)
+	return render_template('feedback.html', info=information, teamlist=cur_user_team_list, current_user=current_user, students=students)
 
 @app.route('/login')
 def login():
@@ -158,9 +156,11 @@ def callback():
 			return redirect(url_for('home'))
 		return 'Could not fetch your information.'
 
-@app.route('/ranking')
+@app.route('/')
 @login_required
-def ranking():
+def home():
+	if not current_user.is_authenticated:
+		return redirect(url_for('login'))
 	return render_template('ranking.html', teamlist=cur_user_team_list, current_user=current_user, students=students)
 
 @app.route('/admin')
@@ -336,12 +336,35 @@ def submitform():
 		rating_is_valid = validate_rating(rating)
 		comment_is_valid = validate_comment(comment)
 		
-		prev_submission = []
+		submitted = False
+		prev_submissions = []
 		for entry in mongodb['ratings'].find({'givenTo': comment['givenTo'], 'givenBy': comment['givenBy'], 'projectNum': comment['projectNum']}):
-			prev_submission.append(entry)
-			break
+			prev_submissions.append(entry)
+		
+		if rating['projectNum'] != 4:
+			submitted = True if prev_submissions else False
+		else:
+			submittedAt = rating['submittedAt']
+			newSubmittedAt = {
+							WEEK[10] <= submittedAt < WEEK[11]: 4.1,
+							WEEK[11] <= submittedAt < WEEK[12]: 4.2,
+							WEEK[12] <= submittedAt < WEEK[13]: 4.3,
+							WEEK[13] <= submittedAt < WEEK[14]: 4.4,
+							}[True]
 
-		if prev_submission:
+			for submission in prev_submissions:
+				postSubmittedAt = submission['submittedAt']	
+				oldPostSubmittedAt = {
+							WEEK[10] <= submittedAt < WEEK[11]: 4.1,
+							WEEK[11] <= submittedAt < WEEK[12]: 4.2,
+							WEEK[12] <= submittedAt < WEEK[13]: 4.3,
+							WEEK[13] <= submittedAt < WEEK[14]: 4.4,
+							}[True]
+				if oldPostSubmittedAt == newSubmittedAt:
+					submitted = True
+					break
+
+		if submitted:
 			response = 'Duplicate Submission'
 		elif rating_is_valid and comment_is_valid:
 			new_rating_id = str(mongodb['ratings'].insert_one(rating).inserted_id)
@@ -411,7 +434,7 @@ def get_ratings():
 	chart_data = compute_chart_data(profile, ratings)
 
 	line_chart = pygal.Bar(stroke=False, style=pygal_style, legend_at_bottom=True, legend_at_bottom_columns=5, legend_box_size=18)
-	line_chart.title = 'Character Ratings Across Projects'
+	line_chart.title = 'Team Ratings Across Projects'
 	line_chart.x_labels = 'Project 1', 'Project 2', 'Project 3', 'Project 4'
 	line_chart.y_labels = range(11)
 	line_chart.add('Work Ethic', [chart_data['workEthic'][1], chart_data['workEthic'][2], chart_data['workEthic'][3], chart_data['workEthic'][4]], rounded_bars=2)
