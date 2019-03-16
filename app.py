@@ -291,7 +291,7 @@ def submitcomment():
 
 		if comment['givenTo'] not in students:
 			response = 'Invalid Target'
-		if comment['givenTo'] ==  comment['givenBy']:
+		elif comment['givenTo'] ==  comment['givenBy']:
 			response = 'Self-Review'
 		elif comment_is_valid:
 			comment['referenceFeedback'] = ''
