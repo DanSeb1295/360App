@@ -6,31 +6,31 @@
 		<span style="width: 20%; text-align: center; color: #555; padding-top: 10px; margin: 15px">
 			Name
 		</span>
-		<span class="proj-tooltip" id="1" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
+		<span class="proj-tooltip" id="1" name="1" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
 			Project<br>1
 			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
-		<span class="proj-tooltip" id="2" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
+		<span class="proj-tooltip" id="2" name="2" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
 			Project<br>2
 			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
-		<span class="proj-tooltip" id="3" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
+		<span class="proj-tooltip" id="3" name="3" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
 			Project<br>3
 			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
-		<span class="proj-tooltip" id="4.1" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
+		<span class="proj-tooltip" id="4-1" name="4.1" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
 			Project<br>4.1
 			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
-		<span class="proj-tooltip" id="4.2" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
+		<span class="proj-tooltip" id="4-2" name="4.2" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
 			Project<br>4.2
 			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
-		<span class="proj-tooltip" id="4.3" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
+		<span class="proj-tooltip" id="4-3" name="4.3" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
 			Project<br>4.3
 			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
-		<span class="proj-tooltip" id="4.4" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px; margin-right: 50px">
+		<span class="proj-tooltip" id="4-4" name="4.4" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px; margin-right: 50px">
 			Project<br>4.4
 			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
@@ -57,11 +57,29 @@
 	$( ".proj-tooltip" ).click(function(e) {
 		$(this).html('<img src="/static/images/loading.gif" style="width: 30px; height: 30px;">')
 		$.post('/sendreminder', {
-			projectNum: this.id
+			projectNum: $(this).attr('name')
 		}).done(function(response) {
 			let projectNum = response['projectNum']
 			let text = 'Email reminder sent to ' + response['sentTo'] + ' students who have yet to complete reviews for Project ' + projectNum
 			alert(text)
+
+			switch(projectNum) {
+				case '4.1':
+					projectNum = '4-1'
+					break
+				case '4.2':
+					projectNum = '4-2'
+					break
+				case '4.3':
+					projectNum = '4-3'
+					break
+				case '4.4':
+					projectNum = '4-4'
+					break
+				default:
+					break
+			}
+			
 			let query = '#' + projectNum
 			console.log(query)
 			$(query).html('Project<br>' + projectNum + '<span class="proj-tooltiptext">Click to send email reminder</span>')
