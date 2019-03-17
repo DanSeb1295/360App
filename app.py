@@ -210,6 +210,11 @@ def profile(name):
 def info():
 	return render_template('/info.html', teamlist=cur_user_team_list, info=information, current_user=current_user, students=students)
 
+@app.route('/extracredit')
+@login_required
+def extra_credit():
+	return render_template('/extra_credit.html', teamlist=cur_user_team_list, info=information, current_user=current_user, students=students)
+
 @app.route('/logout')
 @login_required
 def logout():
