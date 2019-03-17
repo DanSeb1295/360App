@@ -236,6 +236,17 @@ def send_async_email(app, msg):
 	with app.app_context():
 		mail.send(msg)
 
+def email_reminder(project_num, email_list=[]):
+	message = {"subject": "<IEOR171 REMINDER> 360 TEAMMATE REVIEW",
+				"sender": mail_settings["MAIL_USERNAME"],
+				"bcc": ["dyee003@berkeley.edu"],
+				}
+
+	msg = Message(**message)
+	msg.html = render_template('email/email_reminder.html', project_num=project_num)
+
+	Thread(target=send_async_email, args=(app, msg)).start()
+
 def automail():
 	if datetime.datetime.today().weekday() != (DUE_DAY - 1) % 7:
 		return None
@@ -519,6 +530,20 @@ def get_ranking():
 	ranked_list = [{'name': student, 'ratings': ranking_dict[student]} for student in ranked_namelist]
 	
 	return jsonify({'ranked_list': ranked_list})
+
+@app.route('/sendreminder', methods=['POST'])
+def send_reminder():
+	projectNum = str(request.form['projectNum'])
+	class_submissions = get_submissions().get_json()['class_submissions']
+	
+	emails_to_send = []
+	for student in class_submissions:
+		if student['submissions'][projectNum]['submittedFor'] < student['submissions'][projectNum]['teamSize']:
+			emails_to_send.append(student_email_dict[student['name']])
+
+	email_reminder(projectNum, emails_to_send)
+
+	return jsonify({'sentTo': len(emails_to_send), 'projectNum': projectNum})
 
 @app.route('/getsubmissions', methods=['GET'])
 def get_submissions():

@@ -6,26 +6,33 @@
 		<span style="width: 20%; text-align: center; color: #555; padding-top: 10px; margin: 15px">
 			Name
 		</span>
-		<span style="margin: 20px 5px; width: 5%; text-align: center; color: #555; padding-top: 5px; margin: 15px 5px">
+		<span class="proj-tooltip" id="1" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
 			Project<br>1
+			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
-		<span style="margin: 20px 5px; width: 5%; text-align: center; color: #555; padding-top: 5px; margin: 15px 5px">
+		<span class="proj-tooltip" id="2" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
 			Project<br>2
+			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
-		<span style="margin: 20px 5px; width: 5%; text-align: center; color: #555; padding-top: 5px; margin: 15px 5px">
+		<span class="proj-tooltip" id="3" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
 			Project<br>3
+			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
-		<span style="margin: 20px 5px; width: 5%; text-align: center; color: #555; padding-top: 5px; margin: 15px 5px">
+		<span class="proj-tooltip" id="4.1" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
 			Project<br>4.1
+			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
-		<span style="margin: 20px 5px; width: 5%; text-align: center; color: #555; padding-top: 5px; margin: 15px 5px">
+		<span class="proj-tooltip" id="4.2" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
 			Project<br>4.2
+			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
-		<span style="margin: 20px 5px; width: 5%; text-align: center; color: #555; padding-top: 5px; margin: 15px 5px">
+		<span class="proj-tooltip" id="4.3" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
 			Project<br>4.3
+			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
-		<span style="margin: 20px 5px; width: 5%; text-align: center; color: #555; padding-top: 5px; margin: 15px 5px; margin-right: 50px">
+		<span class="proj-tooltip" id="4.4" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px; margin-right: 50px">
 			Project<br>4.4
+			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
 	</div>
 </div>
@@ -47,6 +54,23 @@
 	{% endfor %}
 </div>
 <script type="text/javascript">
+	$( ".proj-tooltip" ).click(function(e) {
+		$(this).html('<img src="/static/images/loading.gif" style="width: 30px; height: 30px;">')
+		$.post('/sendreminder', {
+			projectNum: this.id
+		}).done(function(response) {
+			let projectNum = response['projectNum']
+			let text = 'Email reminder sent to ' + response['sentTo'] + ' students who have yet to complete reviews for Project ' + projectNum
+			alert(text)
+			let query = '#' + projectNum
+			console.log(query)
+			$(query).html('Project<br>' + projectNum + '<span class="proj-tooltiptext">Click to send email reminder</span>')
+		}).fail(function() {
+			alert('Failed to send email reminder.')
+			location.reload()
+		})
+	});
+
 	$(function() {
 		$.get('/getsubmissions').done(function(response) {
 			for (let i = 0; i < response['class_submissions'].length; i++) {
@@ -110,5 +134,47 @@
 	});
 </script>
 <style type="text/css">
+	/* Tooltip text */
+	.proj-tooltip .proj-tooltiptext {
+	  visibility: hidden;
+	  width: 150px;
+	  background-color: black;
+	  color: #fff;
+	  text-align: center;
+	  padding: 10px;
+	  border-radius: 6px;
+	  top: 5%;
+	  margin-left: -79px;  /*Use half of the width (120/2 = 60), to center the tooltip */
+	 
+	  /* Position the tooltip text - see examples below! */
+	  position: absolute;
+	  z-index: 1;
+	}
+
+	/* Show the tooltip text when you mouse over the tooltip container */
+	.proj-tooltip:hover .proj-tooltiptext {
+	  visibility: visible;
+	}
+
+	.proj-tooltip:hover{
+		color: #555;
+	}
+
+	.proj-tooltip:hover{
+		cursor: pointer;
+		color: #999;
+		/*border-bottom: 1px solid #555;*/
+	}
+
+	.proj-tooltip .proj-tooltiptext::after {
+	  content: " ";
+	  position: absolute;
+	  top: 100%; /* At the bottom of the tooltip */
+	  left: 50%;
+	  margin-left: -5px;
+	  border-width: 5px;
+	  border-style: solid;
+	  border-color: black transparent transparent transparent;
+	}
 </style>
 {% endblock %}
