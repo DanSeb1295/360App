@@ -221,7 +221,7 @@ def logout():
 	session.clear()
 	session.pop('username', None)
 	logout_user()
-	return redirect(url_for('home'))
+	return redirect(url_for('login'))
 
 def mail_notif(receiver, feedback):
 	email = student_email_dict[receiver]
