@@ -31,6 +31,3 @@ def wordcloud(profile, word_string):
 	wordcloud.to_file(base_path + img_path)
 	
 	return img_path
-
- 
-
