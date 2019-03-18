@@ -17,11 +17,10 @@
         <li><a href="/feedback">Feedback</a></li>
         <li><a href="/info">Information</a></li>
         <li><a href="/extracredit">Extra Credit</a></li>
-        
+        {% if current_user.admin %}        
         <li><a href="/admin">Admin</a></li>
         <li><a href="/submissions">Submissions</a></li>
-        <!-- {% if current_user.admin %}
-        {% endif %} -->
+        {% endif %}
         <li><a href="/logout">Logout</a></li>
       </ul>
     </div>

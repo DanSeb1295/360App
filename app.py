@@ -179,15 +179,15 @@ def home():
 @app.route('/admin')
 @login_required
 def admin():
-	# if not current_user.admin:
-	# 	return redirect(url_for('home'))
+	if not current_user.admin:
+		return redirect(url_for('home'))
 	return render_template('admin.html', teamlist=cur_user_team_list, current_user=current_user, students=students)
 
 @app.route('/submissions')
 @login_required
 def submissions():
-	# if not current_user.admin:
-	# 	return redirect(url_for('home'))
+	if not current_user.admin:
+		return redirect(url_for('home'))
 	return render_template('submissions.html', teamlist=cur_user_team_list, current_user=current_user, students=students)
 
 @app.route('/profile/<string:name>')
