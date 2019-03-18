@@ -78,14 +78,17 @@
 		for (let i = 0; i < 15; i++){
 			let group = 'input[name="group-' + String(i+1) + '"]:checked'
 			let id = 'q' + String(i+1)
-			let radioValue = parseFloat($(group).val());
+			let radioValue = 0
+			if (!isNaN($(group).val())) {
+				radioValue = parseFloat($(group).val());
+			}
 			if (radioValue < lowest) {
 				lowest = radioValue
 			}
 			ratings[id] = radioValue
 		}
 
-		if (lowest <= 4 && lowest > 0) {
+		if (lowest <= 4 && lowest > 0 && commentText) {
 			if (confirm("You gave at least 1 rating of 2 stars or less. Are you sure?")) {
 				$.post('/submitform', {
 	            givenBy: givenBy,

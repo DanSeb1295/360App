@@ -18,7 +18,7 @@ from requests.exceptions import HTTPError
 from config.config import Auth, DevConfig, ProdConfig, admin_accounts, student_accounts, students, information, DUE_DAY, MAIL_USERNAME, MAIL_PASSWORD, MONGO_URI, GRADES, IBM_API, IBM_URL, WEEK, pygal_style, student_email_dict
 from models.schemas import project_groupings_schema, comments_schema, ratings_schema, articles_schema
 from util.export_sheets import export_to_sheet
-from util.data import visualise, wordcloud
+from util.data import wordcloud
 from watson_developer_cloud import NaturalLanguageUnderstandingV1
 from watson_developer_cloud.natural_language_understanding_v1 import Features, SentimentOptions
 
@@ -179,11 +179,15 @@ def home():
 @app.route('/admin')
 @login_required
 def admin():
+	# if not current_user.admin:
+	# 	return redirect(url_for('home'))
 	return render_template('admin.html', teamlist=cur_user_team_list, current_user=current_user, students=students)
 
 @app.route('/submissions')
 @login_required
 def submissions():
+	# if not current_user.admin:
+	# 	return redirect(url_for('home'))
 	return render_template('submissions.html', teamlist=cur_user_team_list, current_user=current_user, students=students)
 
 @app.route('/profile/<string:name>')
@@ -196,14 +200,7 @@ def profile(name):
 			break
 		else:
 			redirect(url_for('home'))
-	dataplots = visualise()
-	return render_template('profile.html', teamlist=cur_user_team_list, profile=profile, dataplots=dataplots, current_user=current_user, students=students)
-
-# @app.route('/statistics')
-# @login_required
-# def statistics():
-# 	dataplots = visualise()
-# 	return render_template('/statistics.html', dataplots=dataplots, current_user=current_user, students=students)
+	return render_template('profile.html', teamlist=cur_user_team_list, profile=profile, current_user=current_user, students=students)
 
 @app.route('/info')
 @login_required

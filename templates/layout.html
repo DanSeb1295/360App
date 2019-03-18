@@ -16,9 +16,6 @@
 			{% block body %}{% endblock %}
 		</div>
 		<div style="display: -webkit-flex; -webkit-flex-flow: row wrap; display: flex; flex-flow: row wrap; position: fixed; bottom: 10px; width: 100%; justify-content: space-evenly;">
-			<!-- <div style="width:80px; height: 80px;">
-				<a href="{{ '/profile/' + current_user.name.lower().replace(' ', '') if not current_user.admin else '/'}}"><img src="{{current_user.avatar}}" alt={{current_user.name + "'s Photo"}} style="border-radius: 50%; height: 100%; width: 100%; border:2px solid #393E46"></a>	
-			</div> -->
 			{% include 'includes/_popup.html' %}
 		</div>
 	</div>

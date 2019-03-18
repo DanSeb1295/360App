@@ -12,13 +12,8 @@ from math import pi
 base_path = save_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 matplotlib.use('Agg')
 
-def visualise():
-	dataplots = []
-	return dataplots
-
 def wordcloud(profile, word_string):
 	# Create a list of word (https://en.wikipedia.org/wiki/Data_visualization)
-	# text1="This is a sample wordcloud that is being displayed because you have not received any comments yet."
 	text=word_string if word_string else "WordCloud"
 	 
 	# Make the figure
