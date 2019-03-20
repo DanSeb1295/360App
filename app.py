@@ -222,6 +222,7 @@ def logout():
 
 def mail_notif(receiver, feedback):
 	email = student_email_dict[receiver]
+	print(email)
 
 	message = {"subject": "<IEOR171 NOTIFICATION> 360 FEEDBACK RECEIVED",
 				"sender": mail_settings["MAIL_USERNAME"],
@@ -675,5 +676,5 @@ def compute_rating_sentiment(student, ratings, comments=[]):
 			'presenceRaw': presenceRaw}
 
 
-# if __name__ == '__main__':
-# 	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
+if __name__ == '__main__':
+	app.run(debug=True, ssl_context=('./ssl.crt', './ssl.key'))
