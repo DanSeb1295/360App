@@ -115,7 +115,7 @@ information = {
     ]
 }
 
-admin_accounts = ['s.t@berkeley.edu', 'awillerman@berkeley.edu', 'gwynevere.hunger@berkeley.edu', 'dyee003@berkeley.edu']
+admin_accounts = ['s.t@berkeley.edu', 'awillerman@berkeley.edu', 'gwynevere.hunger@berkeley.edu']
 
 student_accounts = [
     'aryakanand@berkeley.edu',
@@ -172,15 +172,11 @@ student_accounts = [
     'jashvora@berkeley.edu',
     'dyee003@berkeley.edu',
     'kimiaz@berkeley.edu',
-    'jlzhang@berkeley.edu'
-] + [
+    'jlzhang@berkeley.edu',
     'sunnyzhang@berkeley.edu',
-    'zzysunny@berkeley.edu',
-    'edward.yang98@berkeley.edu',
-    'edwardyang@berkeley.edu',
-    'edwyang@berkeley.edu',
-    'eddy1994@berkeley.edu'
+    'edwardyang@berkeley.edu'
 ]
+
 student_email_dict = {
     'Aakarsh Gupta': 'aakarshgupta97@berkeley.edu',
     'Aditya Tyagi': 'adi.tyagi@berkeley.edu',
@@ -201,7 +197,7 @@ student_email_dict = {
     'Daniel Sebastian Yee': 'dyee003@berkeley.edu',
     'Daniel Shaby': 'dshaby@berkeley.edu',
     'Dominic Hugo': 'dominichugo@berkeley.edu',
-    'Edward Yang': '',
+    'Edward Yang': 'edwardyang@berkeley.edu',
     'Eric Hovagim': 'ehovagim20@berkeley.edu',
     'Ernest Yong En Tan': 'erne0005@berkeley.edu',
     'Ethan Barnhart': 'ethanjbarnhart@berkeley.edu',
@@ -234,12 +230,13 @@ student_email_dict = {
     'Saehee Im': 'saemalle@berkeley.edu',
     'Si Pei Tan': 'tans0362@berkeley.edu',
     'Smita Balaji': 'smitabalaji@berkeley.edu',
-    'Sunny Zhang': '',
+    'Sunny Zhang': 'sunnyzhang@berkeley.edu',
     'Vimala Veeramachaneni': 'vimalaveera@berkeley.edu',
     'Viraj Attre': 'v.attre@berkeley.edu',
     'Wesley Graham': 'wgraham@berkeley.edu',
     'Yifan Ding': 'yifan.ding@berkeley.edu'
 }
+
 students = [
     'Aakarsh Gupta',
     'Aditya Tyagi',

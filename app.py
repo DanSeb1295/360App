@@ -225,7 +225,7 @@ def mail_notif(receiver, feedback):
 
 	message = {"subject": "<IEOR171 NOTIFICATION> 360 FEEDBACK RECEIVED",
 				"sender": mail_settings["MAIL_USERNAME"],
-				"bcc": ["dyee003@berkeley.edu"],
+				"bcc": [receiver],
 				}
 
 	msg = Message(**message)
@@ -241,7 +241,7 @@ def send_async_email(app, msg):
 def email_reminder(project_num, email_list=[]):
 	message = {"subject": "<IEOR171 REMINDER> 360 TEAMMATE REVIEW",
 				"sender": mail_settings["MAIL_USERNAME"],
-				"bcc": ["dyee003@berkeley.edu"],
+				"bcc": email_list,
 				}
 
 	msg = Message(**message)
