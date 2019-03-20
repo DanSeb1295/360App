@@ -225,7 +225,7 @@ def mail_notif(receiver, feedback):
 
 	message = {"subject": "<IEOR171 NOTIFICATION> 360 FEEDBACK RECEIVED",
 				"sender": mail_settings["MAIL_USERNAME"],
-				"bcc": [receiver],
+				"bcc": [email],
 				}
 
 	msg = Message(**message)
