@@ -9,8 +9,8 @@
 	<div class="btn-container" style="display: -webkit-flex; -webkit-flex-flow: row; display: flex; flex-flow: row; width: 100%; height: 10%; justify-content: space-between; margin: 5px 0px;">
 		<select onchange="loadMembers(this)" id="project-select" type="text" list="project-list" required style="background-color: transparent; border-radius: 5px; border: 2px solid #ccc; width: 20%; height: 50px; line-height: 100px; margin: 0;">
 			<option value="" selected disabled hidden>Choose Project</option>
-			{% for teams in teamlist %}
-		    	<option value="{{loop.index}}">Project {{loop.index}}</option>
+			{% for teams in teamlist.keys() %}
+		    	<option value="{{teams}}">Project {{teams}}</option>
 		    {% endfor %}
 	    </select>
 	    <select onchange="loadQuestions(this)" id="teammate-list" type="text" list="teammate-list" required style="background-color: transparent; border-radius: 5px; border: 2px solid #ccc; width: 79%; height: 50px; line-height: 100px; margin: 0;">
