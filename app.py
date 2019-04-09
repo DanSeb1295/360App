@@ -114,7 +114,7 @@ def users_db():
 @app.route('/feedback')
 @login_required
 def feedback():
-	cur_user_team_list = get_teams_from_mongo(current_user.name)
+	cur_user_team_list = get_teams_from_mongo(current_user.name.title())
 	return render_template('feedback.html', info=information, teamlist=cur_user_team_list, current_user=current_user, students=students)
 
 @app.route('/login')
