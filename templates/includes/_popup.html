@@ -29,7 +29,7 @@
 $( "button#rr-button" ).click(function() {
     var teamlist = {{ teamlist | tojson}};
     
-    var givenBy = String({{current_user.name | tojson }});
+    var givenBy = String({{current_user.name.title() | tojson }});
     var projectNum = parseInt(0);
     var givenTo = String($('#rr-list').val());
     var commentText = String($('#rr-comment').val());

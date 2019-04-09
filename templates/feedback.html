@@ -68,7 +68,7 @@
 	
 	$( "#submit-button" ).click(function() {
 	  var teamlist = {{ teamlist | tojson}};
-	  var givenBy = String({{current_user.name | tojson }});
+	  var givenBy = String({{current_user.name.title() | tojson }});
 	  var projectNum = parseInt($('#project-select option:selected').val());
 	  var teamNum = parseInt(teamlist[projectNum]['team_num']);
 	  var givenTo = String($('#teammate-list option:selected').val());
