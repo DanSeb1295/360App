@@ -376,28 +376,30 @@ def submitform():
 		for entry in mongodb['ratings'].find({'givenTo': comment['givenTo'], 'givenBy': comment['givenBy'], 'projectNum': comment['projectNum']}):
 			prev_submissions.append(entry)
 		
-		if rating['projectNum'] != 4:
-			submitted = True if prev_submissions else False
-		else:
-			submittedAt = rating['submittedAt']
-			newSubmittedAt = {
-							WEEK[10] <= submittedAt < WEEK[11]: 4.1,
-							WEEK[11] <= submittedAt < WEEK[12]: 4.2,
-							WEEK[12] <= submittedAt < WEEK[13]: 4.3,
-							WEEK[13] <= submittedAt < WEEK[14]: 4.4,
-							}[True]
+		submitted = True if prev_submissions else False
 
-			for submission in prev_submissions:
-				postSubmittedAt = submission['submittedAt']	
-				oldPostSubmittedAt = {
-							WEEK[10] <= submittedAt < WEEK[11]: 4.1,
-							WEEK[11] <= submittedAt < WEEK[12]: 4.2,
-							WEEK[12] <= submittedAt < WEEK[13]: 4.3,
-							WEEK[13] <= submittedAt < WEEK[14]: 4.4,
-							}[True]
-				if oldPostSubmittedAt == newSubmittedAt:
-					submitted = True
-					break
+		# if rating['projectNum'] != 4:
+		# 	submitted = True if prev_submissions else False
+		# else:
+		# 	submittedAt = rating['submittedAt']
+		# 	newSubmittedAt = {
+		# 					WEEK[10] <= submittedAt < WEEK[11]: 4.1,
+		# 					WEEK[11] <= submittedAt < WEEK[12]: 4.2,
+		# 					WEEK[12] <= submittedAt < WEEK[13]: 4.3,
+		# 					WEEK[13] <= submittedAt < WEEK[14]: 4.4,
+		# 					}[True]
+
+		# 	for submission in prev_submissions:
+		# 		postSubmittedAt = submission['submittedAt']	
+		# 		oldPostSubmittedAt = {
+		# 					WEEK[10] <= submittedAt < WEEK[11]: 4.1,
+		# 					WEEK[11] <= submittedAt < WEEK[12]: 4.2,
+		# 					WEEK[12] <= submittedAt < WEEK[13]: 4.3,
+		# 					WEEK[13] <= submittedAt < WEEK[14]: 4.4,
+		# 					}[True]
+		# 		if oldPostSubmittedAt == newSubmittedAt:
+		# 			submitted = True
+		# 			break
 
 		if submitted:
 			response = 'Duplicate Submission'
@@ -553,14 +555,20 @@ def get_submissions():
 	class_tracker = {}
 	for s in students:
 		groups = get_teams_from_mongo(s)
+		# individual_tracker = {
+		# 					1: {'teamSize': max(len(groups.get(1, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
+		# 					2: {'teamSize': max(len(groups.get(2, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
+		# 					3: {'teamSize': max(len(groups.get(3, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
+		# 					4.1: {'teamSize': max(len(groups.get(4, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
+		# 					4.2: {'teamSize': max(len(groups.get(4, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
+		# 					4.3: {'teamSize': max(len(groups.get(4, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
+		# 					4.4: {'teamSize': max(len(groups.get(4, {'members': []})['members']) - 1, 0), 'submittedFor': 0}
+		# 				}
 		individual_tracker = {
 							1: {'teamSize': max(len(groups.get(1, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
 							2: {'teamSize': max(len(groups.get(2, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
 							3: {'teamSize': max(len(groups.get(3, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
-							4.1: {'teamSize': max(len(groups.get(4, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
-							4.2: {'teamSize': max(len(groups.get(4, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
-							4.3: {'teamSize': max(len(groups.get(4, {'members': []})['members']) - 1, 0), 'submittedFor': 0},
-							4.4: {'teamSize': max(len(groups.get(4, {'members': []})['members']) - 1, 0), 'submittedFor': 0}
+							4: {'teamSize': max(len(groups.get(4, {'members': []})['members']) - 1, 0), 'submittedFor': 0}
 						}
 		class_tracker[s] = individual_tracker
 
@@ -569,15 +577,16 @@ def get_submissions():
 	for rating in ratings:
 		submission_num = rating['projectNum']
 		submitted_at = rating['submittedAt']
-		submitted_for = {
-						submission_num == 1: submission_num,
-						submission_num == 2: submission_num,
-						submission_num == 3: submission_num,
-						submission_num == 4 and WEEK[10] <= submittedAt < WEEK[11]: 4.1,
-						submission_num == 4 and WEEK[11] <= submittedAt < WEEK[12]: 4.2,
-						submission_num == 4 and WEEK[12] <= submittedAt < WEEK[13]: 4.3,
-						submission_num == 4 and WEEK[13] <= submittedAt < WEEK[14]: 4.4,
-						}[True]
+		submitted_for = submission_num
+		# submitted_for = {
+		# 				submission_num == 1: submission_num,
+		# 				submission_num == 2: submission_num,
+		# 				submission_num == 3: submission_num,
+		# 				submission_num == 4 and WEEK[10] <= submittedAt < WEEK[11]: 4.1,
+		# 				submission_num == 4 and WEEK[11] <= submittedAt < WEEK[12]: 4.2,
+		# 				submission_num == 4 and WEEK[12] <= submittedAt < WEEK[13]: 4.3,
+		# 				submission_num == 4 and WEEK[13] <= submittedAt < WEEK[14]: 4.4,
+		# 				}[True]
 
 		class_tracker[rating['givenBy']][submitted_for]['submittedFor'] += 1
 	

@@ -18,20 +18,8 @@
 			Project<br>3
 			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
-		<span class="proj-tooltip" id="4-1" name="4.1" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
-			Project<br>4.1
-			<span class="proj-tooltiptext">Click to send email reminder</span>
-		</span>
-		<span class="proj-tooltip" id="4-2" name="4.2" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
-			Project<br>4.2
-			<span class="proj-tooltiptext">Click to send email reminder</span>
-		</span>
-		<span class="proj-tooltip" id="4-3" name="4.3" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px">
-			Project<br>4.3
-			<span class="proj-tooltiptext">Click to send email reminder</span>
-		</span>
-		<span class="proj-tooltip" id="4-4" name="4.4" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px; margin-right: 50px">
-			Project<br>4.4
+		<span class="proj-tooltip" id="4" name="4" style="margin: 20px 5px; width: 5%; text-align: center; padding-top: 5px; margin: 15px 5px; margin-right: 50px">
+			Project<br>4
 			<span class="proj-tooltiptext">Click to send email reminder</span>
 		</span>
 	</div>
@@ -46,10 +34,7 @@
 			<span id="project-1-1-{{ loop.index }}" style="width: 5%; text-align: center; color: #555; padding-top: 5px; margin: 15px 1px"></span>
 			<span id="project-2-1-{{ loop.index }}" style="width: 5%; text-align: center; color: #555; padding-top: 5px; margin: 15px 1px"></span>
 			<span id="project-3-1-{{ loop.index }}" style="width: 5%; text-align: center; color: #555; padding-top: 5px; margin: 15px 1px"></span>
-			<span id="project-4-1-{{ loop.index }}" style="width: 5%; text-align: center; color: #555; padding-top: 5px; margin: 15px 1px"></span>
-			<span id="project-4-2-{{ loop.index }}" style="width: 5%; text-align: center; color: #555; padding-top: 5px; margin: 15px 1px"></span>
-			<span id="project-4-3-{{ loop.index }}" style="width: 5%; text-align: center; color: #555; padding-top: 5px; margin: 15px 1px"></span>
-			<span id="project-4-4-{{ loop.index }}" style="width: 5%; text-align: center; color: #555; padding-top: 5px; margin: 15px 1px; margin-right: 50px"></span>
+			<span id="project-4-1-{{ loop.index }}" style="width: 5%; text-align: center; color: #555; padding-top: 5px; margin: 15px 1px; margin-right: 50px"></span>
 		</div>
 	{% endfor %}
 </div>
@@ -77,6 +62,7 @@
 					projectNum = '4-4'
 					break
 				default:
+					projectNum = '4'
 					break
 			}
 			
@@ -99,14 +85,14 @@
 				let proj21Sub = String(response['class_submissions'][i]['submissions'][2]['submittedFor'])
 				let proj31Size = String(response['class_submissions'][i]['submissions'][3]['teamSize'])
 				let proj31Sub = String(response['class_submissions'][i]['submissions'][3]['submittedFor'])
-				let proj41Size = String(response['class_submissions'][i]['submissions'][4.1]['teamSize'])
-				let proj41Sub = String(response['class_submissions'][i]['submissions'][4.1]['submittedFor'])
-				let proj42Size = String(response['class_submissions'][i]['submissions'][4.2]['teamSize'])
-				let proj42Sub = String(response['class_submissions'][i]['submissions'][4.2]['submittedFor'])
-				let proj43Size = String(response['class_submissions'][i]['submissions'][4.3]['teamSize'])
-				let proj43Sub = String(response['class_submissions'][i]['submissions'][4.3]['submittedFor'])
-				let proj44Size = String(response['class_submissions'][i]['submissions'][4.4]['teamSize'])
-				let proj44Sub = String(response['class_submissions'][i]['submissions'][4.4]['submittedFor'])
+				let proj41Size = String(response['class_submissions'][i]['submissions'][4]['teamSize'])
+				let proj41Sub = String(response['class_submissions'][i]['submissions'][4]['submittedFor'])
+				// let proj42Size = String(response['class_submissions'][i]['submissions'][4.2]['teamSize'])
+				// let proj42Sub = String(response['class_submissions'][i]['submissions'][4.2]['submittedFor'])
+				// let proj43Size = String(response['class_submissions'][i]['submissions'][4.3]['teamSize'])
+				// let proj43Sub = String(response['class_submissions'][i]['submissions'][4.3]['submittedFor'])
+				// let proj44Size = String(response['class_submissions'][i]['submissions'][4.4]['teamSize'])
+				// let proj44Sub = String(response['class_submissions'][i]['submissions'][4.4]['submittedFor'])
 
 				j = i + 1
 				let nameQuery = '#name-' + String(j)
@@ -114,35 +100,35 @@
 				let proj21Query = '#project-2-1-' + String(j)
 				let proj31Query = '#project-3-1-' + String(j)
 				let proj41Query = '#project-4-1-' + String(j)
-				let proj42Query = '#project-4-2-' + String(j)
-				let proj43Query = '#project-4-3-' + String(j)
-				let proj44Query = '#project-4-4-' + String(j)
+				// let proj42Query = '#project-4-2-' + String(j)
+				// let proj43Query = '#project-4-3-' + String(j)
+				// let proj44Query = '#project-4-4-' + String(j)
 
 				let proj11Text = proj11Sub + ' / ' + proj11Size
 				let proj21Text = proj21Sub + ' / ' + proj21Size
 				let proj31Text = proj31Sub + ' / ' + proj31Size
 				let proj41Text = proj41Sub + ' / ' + proj41Size
-				let proj42Text = proj42Sub + ' / ' + proj42Size
-				let proj43Text = proj43Sub + ' / ' + proj43Size
-				let proj44Text = proj44Sub + ' / ' + proj44Size
+				// let proj42Text = proj42Sub + ' / ' + proj42Size
+				// let proj43Text = proj43Sub + ' / ' + proj43Size
+				// let proj44Text = proj44Sub + ' / ' + proj44Size
 
 				let imageHTML = '<img src="/static/images/checked.png" style="width: 20px; margin: 0px; padding: 0px;">'
 				if (proj11Sub == proj11Size && proj11Size > 0) { proj11Text = imageHTML };
 				if (proj21Sub == proj21Size && proj21Size > 0) { proj21Text = imageHTML };
 				if (proj31Sub == proj31Size && proj31Size > 0) { proj31Text = imageHTML };
 				if (proj41Sub == proj41Size && proj41Size > 0) { proj41Text = imageHTML };
-				if (proj42Sub == proj42Size && proj42Size > 0) { proj42Text = imageHTML };
-				if (proj43Sub == proj43Size && proj43Size > 0) { proj43Text = imageHTML };
-				if (proj44Sub == proj44Size && proj44Size > 0) { proj44Text = imageHTML };
+				// if (proj42Sub == proj42Size && proj42Size > 0) { proj42Text = imageHTML };
+				// if (proj43Sub == proj43Size && proj43Size > 0) { proj43Text = imageHTML };
+				// if (proj44Sub == proj44Size && proj44Size > 0) { proj44Text = imageHTML };
 
 				$(nameQuery).html(name)
 				$(proj11Query).html(proj11Text)
 				$(proj21Query).html(proj21Text)
 				$(proj31Query).html(proj31Text)
 				$(proj41Query).html(proj41Text)
-				$(proj42Query).html(proj42Text)
-				$(proj43Query).html(proj43Text)
-				$(proj44Query).html(proj44Text)
+				// $(proj42Query).html(proj42Text)
+				// $(proj43Query).html(proj43Text)
+				// $(proj44Query).html(proj44Text)
 			}
 			$('#loading-gif').remove()
 			$('#submissions-board').css('visibility', 'visible')

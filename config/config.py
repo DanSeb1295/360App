@@ -115,7 +115,7 @@ information = {
     ]
 }
 
-admin_accounts = ['s.t@berkeley.edu', 'awillerman@berkeley.edu', 'gwynevere.hunger@berkeley.edu']
+admin_accounts = ['s.t@berkeley.edu', 'awillerman@berkeley.edu', 'gwynevere.hunger@berkeley.edu', 'dyee003@berkeley.edu']
 
 student_accounts = [
     'aryakanand@berkeley.edu',
