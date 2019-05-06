@@ -5,13 +5,6 @@ from pygal.style import Style
 
 
 DUE_DAY = 6
-MAIL_USERNAME = '360ieor171@gmail.com'
-MAIL_PASSWORD = 'stephentorres'
-MONGO_USER = '360App'
-MONGO_PASSWORD = 'stephentorres'
-MONGO_URI = 'mongodb+srv://{}:{}@cluster0-7qgtl.mongodb.net/test?retryWrites=true'.format(MONGO_USER, MONGO_PASSWORD)
-IBM_API = 'TDpw3n7IRfG1k9Lus73e6HNOb1MfoXzRywivqoBhT-40'
-IBM_URL = 'https://gateway.watsonplatform.net/natural-language-understanding/api'
 
 basedir = os.path.abspath(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
 
@@ -56,22 +49,11 @@ pygal_style = Style(
   label_font_size=12.0,
   major_label_font_size=12.0)
 
-class Auth:
-    """Google Project Credentials"""
-    CLIENT_ID = ('1022937286771-t7aritjh57ffsh41gkam13cn86h24jpi.apps.googleusercontent.com')
-    CLIENT_SECRET = '0VbVco0F7caktc7ULy2OBsC1'
-    REDIRECT_URI = 'gCallback'
-    AUTH_URI = 'https://accounts.google.com/o/oauth2/auth'
-    TOKEN_URI = 'https://accounts.google.com/o/oauth2/token'
-    USER_INFO = 'https://www.googleapis.com/userinfo/v2/me'
-    SCOPE = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile']
-
 class Config:
     """Base config"""
     APP_NAME = "360App"
     SECRET_KEY = os.environ.get("SECRET_KEY") or b'\xeb9~,p\xc5$,\xf7\xd1\x80\x81\xfcn\x8f\xe4+\xb5h\xfd\x7f_\xbf\x00'
     MONGO_URI = MONGO_URI
-    # MONGO_URI = 'mongodb+srv://{}:{}@cluster0-7qgtl.mongodb.net/360App?retryWrites=true'.format(os.environ.get("MONGO_USER"), os.environ.get("MONGO_PASSWORD"))
 
 class DevConfig(Config):
     """Dev config"""
